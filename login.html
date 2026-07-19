@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accesso coordinatori — PyraNet Italia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body class="pagina-login">
+
+<main class="login-box">
+  <div class="brand" style="justify-content:center; margin-bottom:1.5rem;">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <div class="brand-text">
+      <h1>PyraNet Italia</h1>
+      <p class="brand-sub">Area riservata coordinatori</p>
+    </div>
+  </div>
+
+  <form id="form-login">
+    <label class="campo-login">
+      <span>Email</span>
+      <input type="email" id="email" required autocomplete="username">
+    </label>
+    <label class="campo-login">
+      <span>Password</span>
+      <input type="password" id="password" required autocomplete="current-password">
+    </label>
+    <button type="submit" class="btn-report" style="width:100%; margin-top:0.5rem;">Accedi</button>
+  </form>
+
+  <p id="messaggio-errore" class="messaggio-errore" hidden></p>
+
+  <p class="panel-note" style="margin-top:1.5rem; text-align:center;">
+    Accesso riservato ai coordinatori autorizzati.<br>
+    Non hai ancora un account? Contatta l'amministratore del progetto.
+  </p>
+
+  <p style="text-align:center; margin-top:1rem;">
+    <a href="index.html">← Torna alla mappa pubblica</a>
+  </p>
+</main>
+
+<script type="module">
+  import { accedi } from "./assets/auth.js";
+
+  const form = document.getElementById("form-login");
+  const messaggioErrore = document.getElementById("messaggio-errore");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    messaggioErrore.hidden = true;
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    try {
+      await accedi(email, password);
+      window.location.href = "area-riservata.html";
+    } catch (errore) {
+      console.error(errore);
+      messaggioErrore.textContent = "Email o password non corrette, oppure account non ancora attivato.";
+      messaggioErrore.hidden = false;
+    }
+  });
+</script>
+</body>
+</html>
