@@ -3,68 +3,193 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Accesso coordinatori — PyraNet Italia</title>
+<title>Area riservata — PyraNet Italia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css">
 </head>
-<body class="pagina-login">
+<body>
 
-<main class="login-box">
-  <div class="brand" style="justify-content:center; margin-bottom:1.5rem;">
+<header class="topbar">
+  <div class="brand">
     <span class="brand-mark" aria-hidden="true"></span>
     <div class="brand-text">
       <h1>PyraNet Italia</h1>
       <p class="brand-sub">Area riservata coordinatori</p>
     </div>
   </div>
+  <div class="status-block">
+    <div class="status-item">
+      <span class="status-label">accesso come</span>
+      <span class="status-value" id="nome-utente">—</span>
+    </div>
+    <button id="btn-esci" class="btn-report" style="width:auto; padding:0.5rem 1rem;">Esci</button>
+  </div>
+</header>
 
-  <form id="form-login">
-    <label class="campo-login">
-      <span>Email</span>
-      <input type="email" id="email" required autocomplete="username">
-    </label>
-    <label class="campo-login">
-      <span>Password</span>
-      <input type="password" id="password" required autocomplete="current-password">
-    </label>
-    <button type="submit" class="btn-report" style="width:100%; margin-top:0.5rem;">Accedi</button>
-  </form>
+<main class="area-riservata-main">
 
-  <p id="messaggio-errore" class="messaggio-errore" hidden></p>
+  <div id="blocco-non-autorizzato" hidden>
+    <p class="panel-note">Il tuo account esiste ma non è ancora stato abilitato come coordinatore. Contatta l'amministratore del progetto per farti assegnare un ruolo.</p>
+  </div>
 
-  <p class="panel-note" style="margin-top:1.5rem; text-align:center;">
-    Accesso riservato ai coordinatori autorizzati.<br>
-    Non hai ancora un account? Contatta l'amministratore del progetto.
-  </p>
+  <div id="contenuto-riservato" hidden>
 
-  <p style="text-align:center; margin-top:1rem;">
-    <a href="index.html">← Torna alla mappa pubblica</a>
-  </p>
+    <section class="riquadro">
+      <h2>Il tuo profilo</h2>
+      <p id="profilo-dettagli" class="mono"></p>
+    </section>
+
+    <section class="riquadro">
+      <h2>Direttorio coordinatori</h2>
+      <div id="lista-coordinatori" class="mono">Caricamento…</div>
+    </section>
+
+    <section class="riquadro">
+      <h2>Segnala un incidente verificato</h2>
+      <p class="panel-note">Questo incidente comparirà anche sulla mappa pubblica, contrassegnato come "verificato da un coordinatore".</p>
+      <form id="form-incidente" class="form-incidente">
+        <label>
+          <span>Latitudine</span>
+          <input type="number" step="any" id="incidente-lat" required placeholder="es. 43.7696">
+        </label>
+        <label>
+          <span>Longitudine</span>
+          <input type="number" step="any" id="incidente-lon" required placeholder="es. 11.2558">
+        </label>
+        <label>
+          <span>Gravità</span>
+          <select id="incidente-gravita">
+            <option value="bassa">Bassa</option>
+            <option value="media" selected>Media</option>
+            <option value="alta">Alta</option>
+          </select>
+        </label>
+        <label>
+          <span>Descrizione</span>
+          <textarea id="incidente-descrizione" rows="3" placeholder="Cosa sta succedendo, punti di riferimento, ecc."></textarea>
+        </label>
+        <button type="submit" class="btn-report" style="width:auto;">Pubblica sulla mappa</button>
+      </form>
+      <p id="messaggio-incidente" class="messaggio-errore" hidden></p>
+    </section>
+
+    <section class="riquadro">
+      <h2>Incidenti verificati recenti</h2>
+      <div id="lista-incidenti" class="mono">Caricamento…</div>
+    </section>
+
+  </div>
+
 </main>
 
 <script type="module">
-  import { accedi } from "./assets/auth.js";
+  import { auth, esci, osservaStatoAccesso, leggiProfiloCoordinatore, db } from "./assets/auth.js";
+  import {
+    collection, getDocs, addDoc, query, orderBy, limit, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  const form = document.getElementById("form-login");
-  const messaggioErrore = document.getElementById("messaggio-errore");
+  const blocoNonAutorizzato = document.getElementById("blocco-non-autorizzato");
+  const contenutoRiservato = document.getElementById("contenuto-riservato");
+  const nomeUtente = document.getElementById("nome-utente");
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    messaggioErrore.hidden = true;
+  osservaStatoAccesso(async (utente) => {
+    if (!utente) {
+      window.location.href = "login.html";
+      return;
+    }
 
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
+    const profilo = await leggiProfiloCoordinatore(utente.uid);
 
+    if (!profilo) {
+      blocoNonAutorizzato.hidden = false;
+      nomeUtente.textContent = utente.email;
+      return;
+    }
+
+    contenutoRiservato.hidden = false;
+    nomeUtente.textContent = profilo.nome || utente.email;
+
+    document.getElementById("profilo-dettagli").textContent =
+      `${profilo.nome || "n/d"} — ${profilo.ruolo || "n/d"} (${profilo.zona || "n/d"})`;
+
+    caricaDirettorio();
+    caricaIncidenti();
+  });
+
+  document.getElementById("btn-esci").addEventListener("click", async () => {
+    await esci();
+    window.location.href = "login.html";
+  });
+
+  async function caricaDirettorio(){
+    const contenitore = document.getElementById("lista-coordinatori");
     try {
-      await accedi(email, password);
-      window.location.href = "area-riservata.html";
+      const istantanea = await getDocs(collection(db, "coordinatori"));
+      if (istantanea.empty) {
+        contenitore.textContent = "Nessun coordinatore trovato.";
+        return;
+      }
+      contenitore.innerHTML = "";
+      istantanea.forEach(documento => {
+        const c = documento.data();
+        const riga = document.createElement("p");
+        riga.textContent = `${c.nome || "n/d"} — ${c.ruolo || "n/d"} (${c.zona || "n/d"}) — ${c.email || ""}`;
+        contenitore.appendChild(riga);
+      });
     } catch (errore) {
       console.error(errore);
-      messaggioErrore.textContent = "Email o password non corrette, oppure account non ancora attivato.";
-      messaggioErrore.hidden = false;
+      contenitore.textContent = "Impossibile caricare il direttorio.";
+    }
+  }
+
+  document.getElementById("form-incidente").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const messaggio = document.getElementById("messaggio-incidente");
+    messaggio.hidden = true;
+
+    const lat = parseFloat(document.getElementById("incidente-lat").value);
+    const lon = parseFloat(document.getElementById("incidente-lon").value);
+    const gravita = document.getElementById("incidente-gravita").value;
+    const descrizione = document.getElementById("incidente-descrizione").value.trim();
+
+    try {
+      const profilo = await leggiProfiloCoordinatore(auth.currentUser.uid);
+      await addDoc(collection(db, "incidenti_verificati"), {
+        lat, lon, gravita, descrizione,
+        coordinatore_nome: profilo?.nome || auth.currentUser.email,
+        creato_il: serverTimestamp(),
+      });
+      e.target.reset();
+      caricaIncidenti();
+    } catch (errore) {
+      console.error(errore);
+      messaggio.textContent = "Errore nel salvataggio. Riprova.";
+      messaggio.hidden = false;
     }
   });
+
+  async function caricaIncidenti(){
+    const contenitore = document.getElementById("lista-incidenti");
+    try {
+      const q = query(collection(db, "incidenti_verificati"), orderBy("creato_il", "desc"), limit(20));
+      const istantanea = await getDocs(q);
+      if (istantanea.empty) {
+        contenitore.textContent = "Nessun incidente verificato ancora inserito.";
+        return;
+      }
+      contenitore.innerHTML = "";
+      istantanea.forEach(documento => {
+        const i = documento.data();
+        const riga = document.createElement("p");
+        riga.textContent = `[${i.gravita}] ${i.lat}, ${i.lon} — ${i.descrizione || "(nessuna descrizione)"} — ${i.coordinatore_nome}`;
+        contenitore.appendChild(riga);
+      });
+    } catch (errore) {
+      console.error(errore);
+      contenitore.textContent = "Impossibile caricare gli incidenti.";
+    }
+  }
 </script>
 </body>
 </html>
