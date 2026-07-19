@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Scarica i rilevamenti attivi di incendio da NASA FIRMS per l'Italia
-e li salva in data/incendi-attivi.json nel formato usato dal sito.
+Scarica i rilevamenti attivi di incendio da NASA FIRMS e tiene solo quelli che
+cadono DAVVERO dentro i confini dell'Italia (non un semplice rettangolo).
 
 Richiede la variabile d'ambiente FIRMS_MAP_KEY (chiave gratuita, vedi README).
-Pensato per essere eseguito dalla GitHub Action .github/workflows/aggiorna-incendi.yml
+Richiede il pacchetto "shapely" (installato dalla GitHub Action).
 """
 
 import csv
@@ -15,23 +15,47 @@ import sys
 import urllib.request
 from datetime import datetime, timezone
 
+from shapely.geometry import shape, Point
+
 MAP_KEY = os.environ.get("FIRMS_MAP_KEY")
 if not MAP_KEY:
     print("Errore: variabile d'ambiente FIRMS_MAP_KEY non impostata.", file=sys.stderr)
     sys.exit(1)
 
-# Bounding box approssimativo dell'Italia (min_lon,min_lat,max_lon,max_lat)
-AREA_ITALIA = "6.6,35.4,18.6,47.2"
-GIORNI = 1  # ultimi N giorni (max 10 per l'endpoint /area)
+# Rettangolo "largo" solo per limitare quanti dati scarichiamo da NASA (efficienza),
+# il confine VERO dell'Italia viene applicato dopo con i confini reali (sotto).
+AREA_LARGA = "6.0,35.0,19.0,47.5"
+GIORNI = 1
 
-# Più sensori = copertura migliore. VIIRS ha risoluzione più fine, MODIS storico più ampio.
 SORGENTI = ["VIIRS_SNPP_NRT", "VIIRS_NOAA20_NRT", "MODIS_NRT"]
-
 BASE_URL = "https://firms.modaps.eosdis.nasa.gov/api/area/csv/{key}/{source}/{area}/{giorni}"
+
+# Confini reali dei paesi del mondo (Natural Earth, dominio pubblico), circa 800 KB.
+CONFINI_URL = "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson"
+
+# I confini "110m" sono semplificati: aggiungiamo un piccolo margine (in gradi,
+# circa 8 km) attorno alla vera forma dell'Italia per non perdere per errore
+# rilevamenti vicino a coste e confini reali.
+MARGINE_GRADI = 0.07
+
+
+def carica_confine_italia():
+    with urllib.request.urlopen(CONFINI_URL, timeout=60) as resp:
+        dati = json.loads(resp.read().decode("utf-8"))
+
+    for feature in dati["features"]:
+        proprieta = feature.get("properties", {})
+        nome = proprieta.get("ADMIN") or proprieta.get("NAME") or ""
+        codice = proprieta.get("ISO_A3") or proprieta.get("ADM0_A3") or ""
+        if nome == "Italy" or codice == "ITA":
+            geometria = shape(feature["geometry"])
+            return geometria.buffer(MARGINE_GRADI)
+
+    raise RuntimeError("Confine dell'Italia non trovato nel file scaricato.")
 
 
 def scarica_sorgente(source):
-    url = BASE_URL.format(key=MAP_KEY, source=source, area=AREA_ITALIA, giorni=GIORNI)
+    url = BASE_URL.format(key=MAP_KEY, source=source, area=AREA_LARGA, giorni=GIORNI)
     try:
         with urllib.request.urlopen(url, timeout=30) as resp:
             testo = resp.read().decode("utf-8")
@@ -74,14 +98,23 @@ def scarica_sorgente(source):
 
 
 def main():
+    print("Scarico i confini reali dell'Italia...")
+    confine_italia = carica_confine_italia()
+
     tutti = []
     for sorgente in SORGENTI:
         tutti.extend(scarica_sorgente(sorgente))
 
+    # tiene solo i punti che cadono davvero dentro l'Italia (+ piccolo margine)
+    dentro_italia = [
+        r for r in tutti
+        if confine_italia.contains(Point(r["lon"], r["lat"]))
+    ]
+
     # rimuove duplicati (stesso punto/ora arrotondato) tra sensori diversi
     visti = set()
     unici = []
-    for r in tutti:
+    for r in dentro_italia:
         chiave = (round(r["lat"], 2), round(r["lon"], 2), r["data_ora"])
         if chiave not in visti:
             visti.add(chiave)
@@ -89,7 +122,7 @@ def main():
 
     output = {
         "aggiornato_il": datetime.now(timezone.utc).isoformat(),
-        "fonte": "NASA FIRMS (VIIRS/MODIS, NRT)",
+        "fonte": "NASA FIRMS (VIIRS/MODIS, NRT) — filtrato sui confini reali dell'Italia",
         "rilevamenti": unici,
     }
 
@@ -97,7 +130,7 @@ def main():
     with open("data/incendi-attivi.json", "w", encoding="utf-8") as f:
         json.dump(output, f, ensure_ascii=False, indent=2)
 
-    print(f"Salvati {len(unici)} rilevamenti in data/incendi-attivi.json")
+    print(f"Trovati {len(tutti)} rilevamenti totali nell'area, {len(unici)} dentro l'Italia.")
 
 
 if __name__ == "__main__":
