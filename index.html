@@ -3,12 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PyraNet Italia — Monitoraggio incendi Italia</title>
+<title>PyraNet Italia — Monitoraggio incendi</title>
 <meta name="description" content="Monitoraggio in tempo quasi reale degli incendi in Italia: dati satellitari NASA FIRMS e segnalazioni dei cittadini, ad uso di associazioni di volontariato e cittadinanza.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ0FNjuNc9NIrZfCfXHIsMLZjgWKX34LwYDBK7c1c1p9pIwQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
@@ -48,6 +49,11 @@
         <input type="checkbox" id="toggle-segnalazioni" checked>
         <span class="dot dot-info"></span>
         Segnalazioni cittadine <em>(non verificate)</em>
+      </label>
+      <label class="layer-toggle">
+        <input type="checkbox" id="toggle-verificati" checked>
+        <span class="dot dot-verificato"></span>
+        Incidenti verificati dai coordinatori
       </label>
     </section>
 
@@ -90,10 +96,10 @@
 </main>
 
 <footer class="disclaimer">
-  <p><strong>Attenzione:</strong> questi dati non sostituiscono i canali ufficiali. Per emergenze in corso chiama il <strong>115</strong> (Vigili del Fuoco) o il <strong>112</strong>. Per bollettini e allerte ufficiali consulta la <a href="https://www.protezionecivile.gov.it" target="_blank" rel="noopener">Protezione Civile</a>.</p>
+  <p><strong>Attenzione:</strong> questi dati non sostituiscono i canali ufficiali. Per emergenze in corso chiama il <strong>115</strong> (Vigili del Fuoco) o il <strong>112</strong>. Per bollettini e allerte ufficiali consulta la <a href="https://www.protezionecivile.gov.it" target="_blank" rel="noopener">Protezione Civile</a>. — <a href="login.html">Area riservata coordinatori</a></p>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-<script src="assets/script.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="module" src="assets/script.js"></script>
 </body>
 </html>
