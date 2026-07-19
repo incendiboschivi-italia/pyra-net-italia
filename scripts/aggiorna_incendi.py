@@ -1,222 +1,178 @@
-// PyraNet Italia — monitoraggio incendi Italia
-// Carica dati statici generati dalla GitHub Action (data/incendi-attivi.json)
-// e le segnalazioni cittadine (data/segnalazioni.json), li mostra su mappa.
+#!/usr/bin/env python3
+"""
+Scarica i rilevamenti attivi di incendio da NASA FIRMS e tiene solo quelli che
+cadono DAVVERO dentro i confini dell'Italia (non un semplice rettangolo).
 
-const CONFIG = {
-  // URL del Google Form pubblico per le segnalazioni cittadine.
-  // Sostituisci con il link del tuo form quando lo crei (vedi README).
-  urlSegnalazione: "#",
-  center: [42.5, 12.5], // centro Italia
-  zoomIniziale: 6,
-};
+Richiede la variabile d'ambiente FIRMS_MAP_KEY (chiave gratuita, vedi README).
+Richiede il pacchetto "shapely" (installato dalla GitHub Action).
+"""
 
-document.getElementById("link-segnalazione").href = CONFIG.urlSegnalazione;
+import csv
+import io
+import json
+import math
+import os
+import sys
+import urllib.request
+from datetime import datetime, timezone
 
-const map = L.map("map", { zoomControl: true }).setView(CONFIG.center, CONFIG.zoomIniziale);
+from shapely.geometry import shape, Point
 
-const stratoSatellitare = L.tileLayer(
-  "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-  {
-    attribution: 'Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics',
-    maxZoom: 18,
-  }
-);
+MAP_KEY = os.environ.get("FIRMS_MAP_KEY")
+if not MAP_KEY:
+    print("Errore: variabile d'ambiente FIRMS_MAP_KEY non impostata.", file=sys.stderr)
+    sys.exit(1)
 
-const stratoTopografico = L.tileLayer(
-  "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
-  {
-    attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, SRTM | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a>',
-    maxZoom: 17,
-  }
-);
+# Rettangolo "largo" solo per limitare quanti dati scarichiamo da NASA (efficienza),
+# il confine VERO dell'Italia viene applicato dopo con i confini reali (sotto).
+AREA_LARGA = "6.0,35.0,19.0,47.5"
+GIORNI = 1
 
-// Topografica selezionata di default: più leggibile per orientarsi sul territorio
-stratoTopografico.addTo(map);
+SORGENTI = ["VIIRS_SNPP_NRT", "VIIRS_NOAA20_NRT", "MODIS_NRT"]
+BASE_URL = "https://firms.modaps.eosdis.nasa.gov/api/area/csv/{key}/{source}/{area}/{giorni}"
 
-L.control.layers(
-  {
-    "Topografica": stratoTopografico,
-    "Satellitare": stratoSatellitare,
-  },
-  {},
-  { position: "topright", collapsed: false }
-).addTo(map);
+# Confini reali dei paesi del mondo (Natural Earth, dominio pubblico), circa 800 KB.
+CONFINI_URL = "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson"
 
-const layerFuoco = L.layerGroup().addTo(map);
-const layerSegnalazioni = L.layerGroup().addTo(map);
+# I confini "110m" sono semplificati: aggiungiamo un piccolo margine (in gradi,
+# circa 8 km) attorno alla vera forma dell'Italia per non perdere per errore
+# rilevamenti vicino a coste e confini reali.
+MARGINE_GRADI = 0.07
 
-let datiFuoco = [];
-let datiSegnalazioni = [];
-let oreSelezionate = 48;
 
-function formatOra(iso){
-  const d = new Date(iso);
-  if (isNaN(d)) return iso;
-  return d.toLocaleString("it-IT", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
-}
+def carica_confine_italia():
+    with urllib.request.urlopen(CONFINI_URL, timeout=60) as resp:
+        dati = json.loads(resp.read().decode("utf-8"))
 
-function decimaleInDMS(valore, tipo){
-  // tipo: "lat" oppure "lon" — determina la lettera (N/S o E/O)
-  const lettera = tipo === "lat"
-    ? (valore >= 0 ? "N" : "S")
-    : (valore >= 0 ? "E" : "O");
+    for feature in dati["features"]:
+        proprieta = feature.get("properties", {})
+        nome = proprieta.get("ADMIN") or proprieta.get("NAME") or ""
+        codice = proprieta.get("ISO_A3") or proprieta.get("ADM0_A3") or ""
+        if nome == "Italy" or codice == "ITA":
+            geometria = shape(feature["geometry"])
+            return geometria.buffer(MARGINE_GRADI)
 
-  const assoluto = Math.abs(valore);
-  const gradi = Math.floor(assoluto);
-  const minutiDecimali = (assoluto - gradi) * 60;
-  const minuti = Math.floor(minutiDecimali);
-  const secondi = ((minutiDecimali - minuti) * 60).toFixed(1);
+    raise RuntimeError("Confine dell'Italia non trovato nel file scaricato.")
 
-  return `${gradi}°${minuti}'${secondi}"${lettera}`;
-}
 
-function coordinateComplete(lat, lon){
-  const dms = `${decimaleInDMS(lat, "lat")} ${decimaleInDMS(lon, "lon")}`;
-  const decimali = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
-  return { dms, decimali };
-}
+# I "falsi positivi" più comuni causati da calore industriale (non incendi boschivi):
+# raffinerie, acciaierie e poli petrolchimici che i satelliti scambiano spesso per
+# focolai a causa delle torce di gas, degli altiforni e dei camini ad alta temperatura.
+# Per ciascuno: nome, latitudine, longitudine, raggio di esclusione in km.
+ZONE_INDUSTRIALI_ESCLUSE = [
+    ("Raffineria di Milazzo (ME)", 38.2031, 15.2678, 3.5),
+    ("Acciaierie ex ILVA di Taranto", 40.4975, 17.2050, 7.0),
+    ("Polo chimico di Ferrara", 44.8585, 11.5957, 3.0),
+    ("Polo petrolchimico di Sarroch (CA)", 39.0720, 9.0220, 4.0),
+    ("Polo petrolchimico di Porto Torres (SS)", 40.8330, 8.4150, 5.0),
+    ("Raffineria di Falconara Marittima (AN)", 43.6386, 13.3804, 2.5),
+]
 
-function coloreIntensita(frp){
-  if (frp === undefined || frp === null) return "#E85A2B";
-  if (frp >= 50) return "#C81E1E";
-  if (frp >= 15) return "#E85A2B";
-  return "#E8A23E";
-}
 
-function raggioIntensita(frp){
-  if (!frp) return 6;
-  return Math.min(18, 6 + frp / 8);
-}
+def distanza_km(lat1, lon1, lat2, lon2):
+    """Distanza approssimata in km tra due punti (formula haversine)."""
+    r = 6371.0
+    p1, p2 = math.radians(lat1), math.radians(lat2)
+    dphi = math.radians(lat2 - lat1)
+    dlambda = math.radians(lon2 - lon1)
+    a = math.sin(dphi / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dlambda / 2) ** 2
+    return 2 * r * math.asin(math.sqrt(a))
 
-function entroIntervallo(iso, ore){
-  const d = new Date(iso).getTime();
-  if (isNaN(d)) return true;
-  return (Date.now() - d) <= ore * 3600 * 1000;
-}
 
-function disegnaFuoco(){
-  layerFuoco.clearLayers();
-  const visibili = datiFuoco.filter(p => entroIntervallo(p.data_ora, oreSelezionate));
-  visibili.forEach(p => {
-    const coord = coordinateComplete(p.lat, p.lon);
-    const marker = L.circleMarker([p.lat, p.lon], {
-      radius: raggioIntensita(p.frp),
-      color: coloreIntensita(p.frp),
-      fillColor: coloreIntensita(p.frp),
-      fillOpacity: 0.55,
-      weight: 1.5,
-    }).bindPopup(
-      `<b>Rilevamento satellitare</b><br>` +
-      `Data e ora: ${formatOra(p.data_ora)}<br>` +
-      `Coordinate: ${coord.dms}<br>` +
-      `Coordinate (decimali): ${coord.decimali}<br>` +
-      `Sensore: ${p.sensore || "n/d"}<br>` +
-      `Confidenza: ${p.confidenza || "n/d"}<br>` +
-      `FRP (intensità): ${p.frp !== undefined && p.frp !== null ? p.frp + " MW" : "n/d"}`
-    );
-    layerFuoco.addLayer(marker);
-  });
-  document.getElementById("count-fuoco").textContent = visibili.length;
-  return visibili;
-}
+def e_falso_positivo_industriale(lat, lon):
+    for nome, zlat, zlon, raggio in ZONE_INDUSTRIALI_ESCLUSE:
+        if distanza_km(lat, lon, zlat, zlon) <= raggio:
+            return True
+    return False
 
-function disegnaSegnalazioni(){
-  layerSegnalazioni.clearLayers();
-  const visibili = datiSegnalazioni.filter(p => entroIntervallo(p.data_ora, oreSelezionate));
-  visibili.forEach(p => {
-    const coord = coordinateComplete(p.lat, p.lon);
-    const marker = L.circleMarker([p.lat, p.lon], {
-      radius: 7,
-      color: "#3E8E8E",
-      fillColor: "#3E8E8E",
-      fillOpacity: 0.5,
-      weight: 1.5,
-      dashArray: "2,2",
-    }).bindPopup(
-      `<b>Segnalazione cittadina (non verificata)</b><br>` +
-      `Data e ora: ${formatOra(p.data_ora)}<br>` +
-      `Coordinate: ${coord.dms}<br>` +
-      `Coordinate (decimali): ${coord.decimali}` +
-      `${p.descrizione ? "<br>Descrizione: " + p.descrizione : ""}`
-    );
-    layerSegnalazioni.addLayer(marker);
-  });
-  document.getElementById("count-segnalazioni").textContent = visibili.length;
-  return visibili;
-}
 
-function aggiornaLog(){
-  const log = document.getElementById("event-log");
-  const eventi = [
-    ...datiFuoco.map(p => ({ ...p, tipo: "fuoco" })),
-    ...datiSegnalazioni.map(p => ({ ...p, tipo: "segnalazione" })),
-  ]
-    .filter(e => entroIntervallo(e.data_ora, oreSelezionate))
-    .sort((a, b) => new Date(b.data_ora) - new Date(a.data_ora))
-    .slice(0, 40);
+def scarica_sorgente(source):
+    url = BASE_URL.format(key=MAP_KEY, source=source, area=AREA_LARGA, giorni=GIORNI)
+    try:
+        with urllib.request.urlopen(url, timeout=30) as resp:
+            testo = resp.read().decode("utf-8")
+    except Exception as e:
+        print(f"Avviso: impossibile scaricare {source}: {e}", file=sys.stderr)
+        return []
 
-  if (eventi.length === 0){
-    log.innerHTML = '<p class="log-empty">Nessun evento nell\'intervallo selezionato.</p>';
-    return;
-  }
+    righe = []
+    reader = csv.DictReader(io.StringIO(testo))
+    for r in reader:
+        try:
+            lat = float(r["latitude"])
+            lon = float(r["longitude"])
+        except (KeyError, ValueError):
+            continue
 
-  log.innerHTML = eventi.map(e => `
-    <div class="log-entry ${e.tipo === "segnalazione" ? "segnalazione" : ""}">
-      <span class="log-time">${formatOra(e.data_ora)}</span>
-      ${e.tipo === "segnalazione" ? "Segnalazione cittadina" : `Rilevamento satellitare${e.frp ? " · " + e.frp + " MW" : ""}`}
-    </div>
-  `).join("");
-}
+        data = r.get("acq_date", "")
+        ora = r.get("acq_time", "0000").zfill(4)
+        try:
+            dt = datetime.strptime(f"{data} {ora}", "%Y-%m-%d %H%M").replace(tzinfo=timezone.utc)
+            data_ora = dt.isoformat()
+        except ValueError:
+            data_ora = None
 
-function ridisegnaTutto(){
-  disegnaFuoco();
-  disegnaSegnalazioni();
-  aggiornaLog();
-}
+        frp = None
+        try:
+            frp = round(float(r.get("frp", "")), 1)
+        except ValueError:
+            pass
 
-// --- Controlli laterali ---
+        righe.append({
+            "lat": round(lat, 4),
+            "lon": round(lon, 4),
+            "data_ora": data_ora,
+            "frp": frp,
+            "confidenza": r.get("confidence", "n/d"),
+            "sensore": r.get("instrument", source.split("_")[0]),
+        })
+    return righe
 
-document.getElementById("toggle-satellite").addEventListener("change", (e) => {
-  if (e.target.checked) map.addLayer(layerFuoco); else map.removeLayer(layerFuoco);
-});
 
-document.getElementById("toggle-segnalazioni").addEventListener("change", (e) => {
-  if (e.target.checked) map.addLayer(layerSegnalazioni); else map.removeLayer(layerSegnalazioni);
-});
+def main():
+    print("Scarico i confini reali dell'Italia...")
+    confine_italia = carica_confine_italia()
 
-document.querySelectorAll(".range-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".range-btn").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    oreSelezionate = parseInt(btn.dataset.hours, 10);
-    ridisegnaTutto();
-  });
-});
+    tutti = []
+    for sorgente in SORGENTI:
+        tutti.extend(scarica_sorgente(sorgente))
 
-// --- Caricamento dati ---
+    # tiene solo i punti che cadono davvero dentro l'Italia (+ piccolo margine)
+    dentro_italia = [
+        r for r in tutti
+        if confine_italia.contains(Point(r["lon"], r["lat"]))
+    ]
 
-async function caricaDati(){
-  document.getElementById("system-status").textContent = "caricamento dati…";
-  try {
-    const [risFuoco, risSegnalazioni] = await Promise.allSettled([
-      fetch("data/incendi-attivi.json", { cache: "no-store" }).then(r => r.json()),
-      fetch("data/segnalazioni.json", { cache: "no-store" }).then(r => r.json()),
-    ]);
+    # esclude i falsi positivi noti (calore industriale, non incendi boschivi)
+    prima_del_filtro = len(dentro_italia)
+    dentro_italia = [
+        r for r in dentro_italia
+        if not e_falso_positivo_industriale(r["lat"], r["lon"])
+    ]
+    esclusi_industriali = prima_del_filtro - len(dentro_italia)
 
-    datiFuoco = risFuoco.status === "fulfilled" ? risFuoco.value.rilevamenti || risFuoco.value : [];
-    datiSegnalazioni = risSegnalazioni.status === "fulfilled" ? risSegnalazioni.value.segnalazioni || risSegnalazioni.value : [];
+    # rimuove duplicati (stesso punto/ora arrotondato) tra sensori diversi
+    visti = set()
+    unici = []
+    for r in dentro_italia:
+        chiave = (round(r["lat"], 2), round(r["lon"], 2), r["data_ora"])
+        if chiave not in visti:
+            visti.add(chiave)
+            unici.append(r)
 
-    const timestamp = (risFuoco.status === "fulfilled" && risFuoco.value.aggiornato_il) || new Date().toISOString();
-    document.getElementById("last-update").textContent = formatOra(timestamp);
-    document.getElementById("system-status").textContent = "attivo";
+    output = {
+        "aggiornato_il": datetime.now(timezone.utc).isoformat(),
+        "fonte": "NASA FIRMS (VIIRS/MODIS, NRT) — filtrato sui confini reali dell'Italia, esclusi i falsi positivi industriali noti",
+        "rilevamenti": unici,
+    }
 
-    ridisegnaTutto();
-  } catch (err){
-    console.error("Errore nel caricamento dei dati:", err);
-    document.getElementById("system-status").textContent = "dati non disponibili";
-  }
-}
+    os.makedirs("data", exist_ok=True)
+    with open("data/incendi-attivi.json", "w", encoding="utf-8") as f:
+        json.dump(output, f, ensure_ascii=False, indent=2)
 
-caricaDati();
-// Ricontrolla i dati ogni 15 minuti (i dati stessi si aggiornano ogni poche ore via GitHub Action)
-setInterval(caricaDati, 15 * 60 * 1000);
+    print(f"Trovati {len(tutti)} rilevamenti totali nell'area, {len(unici)} dentro l'Italia "
+          f"({esclusi_industriali} esclusi come falsi positivi industriali).")
+
+
+if __name__ == "__main__":
+    main()
