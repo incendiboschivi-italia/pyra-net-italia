@@ -20,6 +20,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Installa le librerie necessarie
+        run: pip install shapely
+
       - name: Esegui lo script di aggiornamento
         env:
           FIRMS_MAP_KEY: ${{ secrets.FIRMS_MAP_KEY }}
