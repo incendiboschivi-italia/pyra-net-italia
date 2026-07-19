@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sentinella — Monitoraggio incendi Italia</title>
+<meta name="description" content="Monitoraggio in tempo quasi reale degli incendi in Italia: dati satellitari NASA FIRMS e segnalazioni dei cittadini, ad uso di associazioni di volontariato e cittadinanza.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ0FNjuNc9NIrZfCfXHIsMLZjgWKX34LwYDBK7c1c1p9pIwQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <div class="brand-text">
+      <h1>Sentinella</h1>
+      <p class="brand-sub">Monitoraggio incendi — Italia</p>
+    </div>
+  </div>
+
+  <div class="status-block" id="status-block">
+    <div class="status-item">
+      <span class="status-label">stato sistema</span>
+      <span class="status-value" id="system-status">— in avvio —</span>
+    </div>
+    <div class="status-item">
+      <span class="status-label">ultimo aggiornamento</span>
+      <span class="status-value mono" id="last-update">--:--</span>
+    </div>
+  </div>
+</header>
+
+<main class="app">
+
+  <aside class="panel panel-left">
+    <section class="panel-section">
+      <h2>Livello di conferma</h2>
+      <label class="layer-toggle">
+        <input type="checkbox" id="toggle-satellite" checked>
+        <span class="dot dot-fuoco"></span>
+        Rilevamenti satellitari (NASA FIRMS)
+      </label>
+      <label class="layer-toggle">
+        <input type="checkbox" id="toggle-segnalazioni" checked>
+        <span class="dot dot-info"></span>
+        Segnalazioni cittadine <em>(non verificate)</em>
+      </label>
+    </section>
+
+    <section class="panel-section">
+      <h2>Intervallo temporale</h2>
+      <div class="range-select" id="range-select">
+        <button class="range-btn" data-hours="24">24h</button>
+        <button class="range-btn active" data-hours="48">48h</button>
+        <button class="range-btn" data-hours="120">5 giorni</button>
+      </div>
+    </section>
+
+    <section class="panel-section counters">
+      <div class="counter">
+        <span class="counter-value" id="count-fuoco">0</span>
+        <span class="counter-label">focolai satellitari</span>
+      </div>
+      <div class="counter">
+        <span class="counter-value" id="count-segnalazioni">0</span>
+        <span class="counter-label">segnalazioni cittadine</span>
+      </div>
+    </section>
+
+    <section class="panel-section">
+      <h2>Segnala un incendio</h2>
+      <p class="panel-note">Hai visto fumo o fiamme? Prima chiama il 115 (Vigili del Fuoco). Poi, se vuoi, segnala qui per aiutare i volontari a orientarsi.</p>
+      <a href="#" id="link-segnalazione" class="btn-report" target="_blank" rel="noopener">Invia una segnalazione →</a>
+    </section>
+  </aside>
+
+  <div id="map"></div>
+
+  <aside class="panel panel-right">
+    <h2>Registro rilevamenti</h2>
+    <div class="log" id="event-log">
+      <p class="log-empty">In attesa di dati…</p>
+    </div>
+  </aside>
+
+</main>
+
+<footer class="disclaimer">
+  <p><strong>Attenzione:</strong> questi dati non sostituiscono i canali ufficiali. Per emergenze in corso chiama il <strong>115</strong> (Vigili del Fuoco) o il <strong>112</strong>. Per bollettini e allerte ufficiali consulta la <a href="https://www.protezionecivile.gov.it" target="_blank" rel="noopener">Protezione Civile</a>.</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="assets/script.js"></script>
+</body>
+</html>

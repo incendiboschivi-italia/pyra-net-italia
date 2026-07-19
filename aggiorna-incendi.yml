@@ -1,0 +1,34 @@
+name: Aggiorna dati incendi
+
+on:
+  schedule:
+    - cron: "20 */3 * * *"   # ogni 3 ore
+  workflow_dispatch: {}       # permette anche l'avvio manuale da GitHub
+
+permissions:
+  contents: write
+
+jobs:
+  aggiorna:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Scarica il repository
+        uses: actions/checkout@v4
+
+      - name: Imposta Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Esegui lo script di aggiornamento
+        env:
+          FIRMS_MAP_KEY: ${{ secrets.FIRMS_MAP_KEY }}
+        run: python scripts/aggiorna_incendi.py
+
+      - name: Pubblica i dati aggiornati
+        run: |
+          git config user.name "sentinella-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/incendi-attivi.json
+          git diff --staged --quiet || git commit -m "Aggiornamento automatico dati incendi"
+          git push

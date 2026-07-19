@@ -1,0 +1,9 @@
+{
+  "aggiornato_il": "2026-07-19T08:00:00Z",
+  "fonte": "NASA FIRMS (dati di esempio — verranno sostituiti automaticamente)",
+  "rilevamenti": [
+    { "lat": 41.9028, "lon": 12.4964, "data_ora": "2026-07-19T06:12:00Z", "frp": 12.4, "confidenza": "media", "sensore": "VIIRS" },
+    { "lat": 40.8518, "lon": 14.2681, "data_ora": "2026-07-19T05:40:00Z", "frp": 34.9, "confidenza": "alta", "sensore": "VIIRS" },
+    { "lat": 38.1157, "lon": 13.3615, "data_ora": "2026-07-18T22:05:00Z", "frp": 61.2, "confidenza": "alta", "sensore": "MODIS" }
+  ]
+}
