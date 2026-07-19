@@ -46,20 +46,20 @@
     </section>
 
     <section class="riquadro">
-      <h2>Segnala un incidente verificato</h2>
-      <p class="panel-note">Questo incidente comparirà anche sulla mappa pubblica, contrassegnato come "verificato da un coordinatore".</p>
-      <form id="form-incidente" class="form-incidente">
+      <h2>Segnala un incendio verificato</h2>
+      <p class="panel-note">Questo incendio comparirà anche sulla mappa pubblica, contrassegnato come "verificato da un coordinatore".</p>
+      <form id="form-incendio" class="form-incendio">
         <label>
           <span>Latitudine</span>
-          <input type="number" step="any" id="incidente-lat" required placeholder="es. 43.7696">
+          <input type="number" step="any" id="incendio-lat" required placeholder="es. 43.7696">
         </label>
         <label>
           <span>Longitudine</span>
-          <input type="number" step="any" id="incidente-lon" required placeholder="es. 11.2558">
+          <input type="number" step="any" id="incendio-lon" required placeholder="es. 11.2558">
         </label>
         <label>
           <span>Gravità</span>
-          <select id="incidente-gravita">
+          <select id="incendio-gravita">
             <option value="bassa">Bassa</option>
             <option value="media" selected>Media</option>
             <option value="alta">Alta</option>
@@ -67,11 +67,11 @@
         </label>
         <label>
           <span>Descrizione</span>
-          <textarea id="incidente-descrizione" rows="3" placeholder="Cosa sta succedendo, punti di riferimento, ecc."></textarea>
+          <textarea id="incendio-descrizione" rows="3" placeholder="Cosa sta succedendo, punti di riferimento, ecc."></textarea>
         </label>
         <button type="submit" class="btn-report" style="width:auto;">Pubblica sulla mappa</button>
       </form>
-      <p id="messaggio-incidente" class="messaggio-errore" hidden></p>
+      <p id="messaggio-incendio" class="messaggio-errore" hidden></p>
     </section>
 
     <section class="riquadro">
