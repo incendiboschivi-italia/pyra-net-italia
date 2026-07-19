@@ -3,12 +3,15 @@
 // un'app web con Firebase e possono stare tranquillamente in un file pubblico.
 // La vera sicurezza è garantita dalle regole di Firestore (file firestore.rules),
 // non dal nascondere questi valori.
+//
+// Sostituisci i valori qui sotto con quelli del TUO progetto Firebase
+// (li trovi in: Console Firebase → Impostazioni progetto → Le tue app → Web).
 
 export const firebaseConfig = {
-  apiKey: "AIzaSyAXOG7ezWRtvNnUVpKMHsHK08o9JcQa6vw",
-  authDomain: "pyranet-italia-a31bb.firebaseapp.com",
-  projectId: "pyranet-italia-a31bb",
-  storageBucket: "pyranet-italia-a31bb.firebasestorage.app",
-  messagingSenderId: "487249424872",
-  appId: "1:487249424872:web:7fcfffc3201fd96672f45d",
+  apiKey: "INSERISCI_QUI_LA_TUA_API_KEY",
+  authDomain: "INSERISCI_QUI.firebaseapp.com",
+  projectId: "INSERISCI_QUI",
+  storageBucket: "INSERISCI_QUI.appspot.com",
+  messagingSenderId: "INSERISCI_QUI",
+  appId: "INSERISCI_QUI",
 };
