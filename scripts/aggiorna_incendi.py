@@ -84,6 +84,9 @@ def e_falso_positivo_industriale(lat, lon):
         if distanza_km(lat, lon, zlat, zlon) <= raggio:
             return True
     return False
+
+
+def scarica_sorgente(source):
     url = BASE_URL.format(key=MAP_KEY, source=source, area=AREA_LARGA, giorni=GIORNI)
     try:
         with urllib.request.urlopen(url, timeout=30) as resp:
