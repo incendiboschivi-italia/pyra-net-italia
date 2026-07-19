@@ -10,6 +10,7 @@ Richiede il pacchetto "shapely" (installato dalla GitHub Action).
 import csv
 import io
 import json
+import math
 import os
 import sys
 import urllib.request
@@ -54,7 +55,35 @@ def carica_confine_italia():
     raise RuntimeError("Confine dell'Italia non trovato nel file scaricato.")
 
 
-def scarica_sorgente(source):
+# I "falsi positivi" più comuni causati da calore industriale (non incendi boschivi):
+# raffinerie, acciaierie e poli petrolchimici che i satelliti scambiano spesso per
+# focolai a causa delle torce di gas, degli altiforni e dei camini ad alta temperatura.
+# Per ciascuno: nome, latitudine, longitudine, raggio di esclusione in km.
+ZONE_INDUSTRIALI_ESCLUSE = [
+    ("Raffineria di Milazzo (ME)", 38.2031, 15.2678, 3.5),
+    ("Acciaierie ex ILVA di Taranto", 40.4975, 17.2050, 7.0),
+    ("Polo chimico di Ferrara", 44.8585, 11.5957, 3.0),
+    ("Polo petrolchimico di Sarroch (CA)", 39.0720, 9.0220, 4.0),
+    ("Polo petrolchimico di Porto Torres (SS)", 40.8330, 8.4150, 5.0),
+    ("Raffineria di Falconara Marittima (AN)", 43.6386, 13.3804, 2.5),
+]
+
+
+def distanza_km(lat1, lon1, lat2, lon2):
+    """Distanza approssimata in km tra due punti (formula haversine)."""
+    r = 6371.0
+    p1, p2 = math.radians(lat1), math.radians(lat2)
+    dphi = math.radians(lat2 - lat1)
+    dlambda = math.radians(lon2 - lon1)
+    a = math.sin(dphi / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dlambda / 2) ** 2
+    return 2 * r * math.asin(math.sqrt(a))
+
+
+def e_falso_positivo_industriale(lat, lon):
+    for nome, zlat, zlon, raggio in ZONE_INDUSTRIALI_ESCLUSE:
+        if distanza_km(lat, lon, zlat, zlon) <= raggio:
+            return True
+    return False
     url = BASE_URL.format(key=MAP_KEY, source=source, area=AREA_LARGA, giorni=GIORNI)
     try:
         with urllib.request.urlopen(url, timeout=30) as resp:
@@ -111,6 +140,14 @@ def main():
         if confine_italia.contains(Point(r["lon"], r["lat"]))
     ]
 
+    # esclude i falsi positivi noti (calore industriale, non incendi boschivi)
+    prima_del_filtro = len(dentro_italia)
+    dentro_italia = [
+        r for r in dentro_italia
+        if not e_falso_positivo_industriale(r["lat"], r["lon"])
+    ]
+    esclusi_industriali = prima_del_filtro - len(dentro_italia)
+
     # rimuove duplicati (stesso punto/ora arrotondato) tra sensori diversi
     visti = set()
     unici = []
@@ -122,7 +159,7 @@ def main():
 
     output = {
         "aggiornato_il": datetime.now(timezone.utc).isoformat(),
-        "fonte": "NASA FIRMS (VIIRS/MODIS, NRT) — filtrato sui confini reali dell'Italia",
+        "fonte": "NASA FIRMS (VIIRS/MODIS, NRT) — filtrato sui confini reali dell'Italia, esclusi i falsi positivi industriali noti",
         "rilevamenti": unici,
     }
 
@@ -130,7 +167,8 @@ def main():
     with open("data/incendi-attivi.json", "w", encoding="utf-8") as f:
         json.dump(output, f, ensure_ascii=False, indent=2)
 
-    print(f"Trovati {len(tutti)} rilevamenti totali nell'area, {len(unici)} dentro l'Italia.")
+    print(f"Trovati {len(tutti)} rilevamenti totali nell'area, {len(unici)} dentro l'Italia "
+          f"({esclusi_industriali} esclusi come falsi positivi industriali).")
 
 
 if __name__ == "__main__":
