@@ -79,8 +79,8 @@
 
     <section class="panel-section">
       <h2>Segnala un incendio</h2>
-      <p class="panel-note">Hai visto fumo o fiamme? Prima chiama il 115 (Vigili del Fuoco). Poi, se vuoi, segnala qui per aiutare i volontari a orientarsi.</p>
-      <a href="#" id="link-segnalazione" class="btn-report" target="_blank" rel="noopener">Invia una segnalazione →</a>
+      <p class="panel-note">Hai visto fumo o fiamme? Prima chiama il 115 (Vigili del Fuoco). Poi, se vuoi, segnala qui: la segnalazione resterà "in attesa" finché un coordinatore regionale o provinciale non la verifica.</p>
+      <button id="btn-apri-segnalazione" class="btn-report" type="button">Segnala un incendio →</button>
     </section>
   </aside>
 
@@ -94,6 +94,31 @@
   </aside>
 
 </main>
+
+<div id="modale-segnalazione" class="modale" hidden>
+  <div class="modale-contenuto">
+    <button type="button" id="chiudi-modale-segnalazione" class="modale-chiudi" aria-label="Chiudi">×</button>
+    <h2>Segnala un incendio</h2>
+    <p class="panel-note">La tua segnalazione comparirà sulla mappa come "in attesa di verifica" finché un coordinatore regionale o provinciale non la conferma.</p>
+    <form id="form-segnalazione-cittadino" class="form-incidente">
+      <label>
+        <span>Latitudine</span>
+        <input type="number" step="any" id="segnalazione-lat" required placeholder="es. 43.7696">
+      </label>
+      <label>
+        <span>Longitudine</span>
+        <input type="number" step="any" id="segnalazione-lon" required placeholder="es. 11.2558">
+      </label>
+      <button type="button" id="btn-usa-posizione" class="btn-report" style="width:auto; background:var(--surface-2); color:var(--text); border:1px solid var(--border);">Usa la mia posizione attuale</button>
+      <label>
+        <span>Descrizione (facoltativa)</span>
+        <textarea id="segnalazione-descrizione" rows="3" placeholder="Cosa vedi, punti di riferimento, ecc."></textarea>
+      </label>
+      <button type="submit" class="btn-report" style="width:auto;">Invia la segnalazione</button>
+    </form>
+    <p id="messaggio-segnalazione-cittadino" class="messaggio-errore" hidden></p>
+  </div>
+</div>
 
 <footer class="disclaimer">
   <p><strong>Attenzione:</strong> questi dati non sostituiscono i canali ufficiali. Per emergenze in corso chiama il <strong>115</strong> (Vigili del Fuoco) o il <strong>112</strong>. Per bollettini e allerte ufficiali consulta la <a href="https://www.protezionecivile.gov.it" target="_blank" rel="noopener">Protezione Civile</a>. — <a href="login.html">Area riservata coordinatori</a></p>
