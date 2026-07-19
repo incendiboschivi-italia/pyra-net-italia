@@ -41,7 +41,7 @@
     </section>
 
     <section class="riquadro">
-      <h2>Direttorio coordinatori</h2>
+      <h2>Direttore coordinatori</h2>
       <div id="lista-coordinatori" class="mono">Caricamento…</div>
     </section>
 
@@ -113,7 +113,7 @@
     document.getElementById("profilo-dettagli").textContent =
       `${profilo.nome || "n/d"} — ${profilo.ruolo || "n/d"} (${profilo.zona || "n/d"})`;
 
-    caricaDirettorio();
+    caricaDirettore();
     caricaIncidenti();
   });
 
@@ -122,7 +122,7 @@
     window.location.href = "login.html";
   });
 
-  async function caricaDirettorio(){
+  async function caricaDirettore(){
     const contenitore = document.getElementById("lista-coordinatori");
     try {
       const istantanea = await getDocs(collection(db, "coordinatori"));
@@ -139,7 +139,7 @@
       });
     } catch (errore) {
       console.error(errore);
-      contenitore.textContent = "Impossibile caricare il direttorio.";
+      contenitore.textContent = "Impossibile caricare il direttore.";
     }
   }
 
