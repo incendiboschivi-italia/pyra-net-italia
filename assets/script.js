@@ -1,4 +1,4 @@
-// Sentinella — monitoraggio incendi Italia
+// PyraNet Italia — monitoraggio incendi Italia
 // Carica dati statici generati dalla GitHub Action (data/incendi-attivi.json)
 // e le segnalazioni cittadine (data/segnalazioni.json), li mostra su mappa.
 
@@ -14,10 +14,33 @@ document.getElementById("link-segnalazione").href = CONFIG.urlSegnalazione;
 
 const map = L.map("map", { zoomControl: true }).setView(CONFIG.center, CONFIG.zoomIniziale);
 
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-  maxZoom: 18,
-}).addTo(map);
+const stratoSatellitare = L.tileLayer(
+  "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+  {
+    attribution: 'Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics',
+    maxZoom: 18,
+  }
+);
+
+const stratoTopografico = L.tileLayer(
+  "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+  {
+    attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, SRTM | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a>',
+    maxZoom: 17,
+  }
+);
+
+// Topografica selezionata di default: più leggibile per orientarsi sul territorio
+stratoTopografico.addTo(map);
+
+L.control.layers(
+  {
+    "Topografica": stratoTopografico,
+    "Satellitare": stratoSatellitare,
+  },
+  {},
+  { position: "topright", collapsed: false }
+).addTo(map);
 
 const layerFuoco = L.layerGroup().addTo(map);
 const layerSegnalazioni = L.layerGroup().addTo(map);
