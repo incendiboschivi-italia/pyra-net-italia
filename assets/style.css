@@ -160,6 +160,7 @@ a{ color: var(--accent-fuoco); }
 }
 .dot-fuoco{ background: var(--accent-fuoco); }
 .dot-info{ background: var(--accent-info); }
+.dot-verificato{ background: #4CAF50; }
 
 .range-select{
   display: flex;
@@ -298,6 +299,163 @@ a{ color: var(--accent-fuoco); }
 }
 .leaflet-control-layers-separator{
   border-top: 1px solid var(--border);
+}
+
+/* ---------- Modale di segnalazione ---------- */
+
+.modale{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modale-contenuto{
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.75rem;
+  width: 100%;
+  max-width: 420px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modale-contenuto h2{
+  font-size: 1rem;
+  margin: 0 0 0.75rem 0;
+  font-family: var(--font-body);
+}
+
+.modale-chiudi{
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 1.5rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.modale .form-incidente label{ margin-bottom: 0.85rem; }
+.modale .btn-report{ margin-bottom: 0.85rem; }
+
+/* ---------- Login e area riservata ---------- */
+
+.pagina-login{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.login-box{
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 380px;
+}
+
+.campo-login{
+  display: block;
+  margin-bottom: 1rem;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.campo-login span{
+  display: block;
+  margin-bottom: 0.3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+}
+
+.campo-login input{
+  width: 100%;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.6rem;
+  border-radius: 5px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+}
+
+.messaggio-errore{
+  color: var(--accent-critico);
+  font-size: 0.8rem;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.area-riservata-main{
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.riquadro{
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.riquadro h2{
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  margin: 0 0 1rem 0;
+}
+
+.form-incidente label{
+  display: block;
+  margin-bottom: 0.85rem;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.form-incidente span{
+  display: block;
+  margin-bottom: 0.3rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.form-incidente input,
+.form-incidente select,
+.form-incidente textarea{
+  width: 100%;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.5rem;
+  border-radius: 5px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+}
+
+#lista-coordinatori p,
+#lista-incidenti p{
+  font-size: 0.78rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--border);
 }
 
 /* ---------- Responsive ---------- */
