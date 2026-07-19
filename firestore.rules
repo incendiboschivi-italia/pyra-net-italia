@@ -1,70 +1,65 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Accesso coordinatori — PyraNet Italia</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css">
-</head>
-<body class="pagina-login">
+rules_version = '2';
 
-<main class="login-box">
-  <div class="brand" style="justify-content:center; margin-bottom:1.5rem;">
-    <span class="brand-mark" aria-hidden="true"></span>
-    <div class="brand-text">
-      <h1>PyraNet Italia</h1>
-      <p class="brand-sub">Area riservata coordinatori</p>
-    </div>
-  </div>
+// Queste regole sono il VERO meccanismo di sicurezza del sistema (non il
+// codice del sito, che chiunque può leggere). Vanno incollate in:
+// Console Firebase → Firestore Database → Regole.
 
-  <form id="form-login">
-    <label class="campo-login">
-      <span>Email</span>
-      <input type="email" id="email" required autocomplete="username">
-    </label>
-    <label class="campo-login">
-      <span>Password</span>
-      <input type="password" id="password" required autocomplete="current-password">
-    </label>
-    <button type="submit" class="btn-report" style="width:100%; margin-top:0.5rem;">Accedi</button>
-  </form>
+service cloud.firestore {
+  match /databases/{database}/documents {
 
-  <p id="messaggio-errore" class="messaggio-errore" hidden></p>
-
-  <p class="panel-note" style="margin-top:1.5rem; text-align:center;">
-    Accesso riservato ai coordinatori autorizzati.<br>
-    Non hai ancora un account? Contatta l'amministratore del progetto.
-  </p>
-
-  <p style="text-align:center; margin-top:1rem;">
-    <a href="index.html">← Torna alla mappa pubblica</a>
-  </p>
-</main>
-
-<script type="module">
-  import { accedi } from "./assets/auth.js";
-
-  const form = document.getElementById("form-login");
-  const messaggioErrore = document.getElementById("messaggio-errore");
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    messaggioErrore.hidden = true;
-
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
-
-    try {
-      await accedi(email, password);
-      window.location.href = "area-riservata.html";
-    } catch (errore) {
-      console.error(errore);
-      messaggioErrore.textContent = "Email o password non corrette, oppure account non ancora attivato.";
-      messaggioErrore.hidden = false;
+    // Un utente è un "coordinatore" solo se esiste un documento con il suo
+    // stesso UID nella collezione coordinatori. Questi documenti li crea
+    // SOLO Gabriele a mano dalla console Firebase, mai il sito.
+    function isCoordinatore() {
+      return request.auth != null &&
+        exists(/databases/$(database)/documents/coordinatori/$(request.auth.uid));
     }
-  });
-</script>
-</body>
-</html>
+
+    function ruoloCoordinatore() {
+      return get(/databases/$(database)/documents/coordinatori/$(request.auth.uid)).data.ruolo;
+    }
+
+    // I coordinatori Interregionali, Regionali o Provinciali possono
+    // verificare o rifiutare una segnalazione.
+    function puoVerificare() {
+      return isCoordinatore() &&
+        (ruoloCoordinatore().matches('.*[Ii]nterregionale.*') ||
+         ruoloCoordinatore().matches('.*[Rr]egionale.*') ||
+         ruoloCoordinatore().matches('.*[Pp]rovinciale.*'));
+    }
+
+    // Direttorio coordinatori: leggibile solo da altri coordinatori loggati.
+    // Nessuno può scriverci dal sito: si modifica solo dalla console Firebase.
+    match /coordinatori/{uid} {
+      allow read: if isCoordinatore();
+      allow write: if false;
+    }
+
+    // Segnalazioni (cittadine + verificate): un'unica collezione con un
+    // campo "stato" che ne segue il ciclo di vita:
+    //   in_attesa  → appena inviata da un cittadino, chiunque può crearla
+    //   verificata → confermata da un coordinatore Regionale/Provinciale
+    //   rifiutata  → scartata da un coordinatore Regionale/Provinciale
+    match /segnalazioni/{docId} {
+      // Lettura pubblica: la mappa la mostra a tutti, verificate o in attesa.
+      allow read: if true;
+
+      // Chiunque (anche senza login) può creare una segnalazione, ma SOLO
+      // con stato "in_attesa": nessuno può auto-dichiararsi "verificato".
+      allow create: if request.resource.data.stato == 'in_attesa'
+                    && request.resource.data.lat is number
+                    && request.resource.data.lon is number;
+
+      // Solo un coordinatore Regionale o Provinciale può cambiare lo stato
+      // (verificare o rifiutare). Un Interregionale non può.
+      allow update: if puoVerificare();
+
+      allow delete: if false;
+    }
+
+    // Tutto il resto è vietato di default.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
