@@ -8,7 +8,7 @@
 // (li trovi in: Console Firebase → Impostazioni progetto → Le tue app → Web).
 
 export const firebaseConfig = {
-  apiKey: "INSERISCI_QUI_LA_TUA_API_KEY",
+  apiKey: "AIzaSyAXOG7ezWRtvNnUVpKMHsHK08o9JcQa6vw",
   authDomain: "INSERISCI_QUI.firebaseapp.com",
   projectId: "INSERISCI_QUI",
   storageBucket: "INSERISCI_QUI.appspot.com",
