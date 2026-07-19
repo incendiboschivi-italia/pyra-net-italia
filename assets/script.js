@@ -1,16 +1,25 @@
-// PyraNet Italia — monitoraggio incendi Italia
-// Carica dati statici generati dalla GitHub Action (data/incendi-attivi.json)
-// e le segnalazioni cittadine (data/segnalazioni.json), li mostra su mappa.
+// PyraNet Italia — monitoraggio incendi
+// Carica i rilevamenti satellitari statici (data/incendi-attivi.json, generati
+// dalla GitHub Action) e le segnalazioni (cittadine + verificate) da Firestore.
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore, collection, getDocs, addDoc, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { firebaseConfig } from "./firebase-config.js";
+
+let db = null;
+try {
+  const appFirebase = initializeApp(firebaseConfig);
+  db = getFirestore(appFirebase);
+} catch (errore) {
+  console.warn("Firebase non configurato: le segnalazioni resteranno vuote finché non viene impostato assets/firebase-config.js", errore);
+}
 
 const CONFIG = {
-  // URL del Google Form pubblico per le segnalazioni cittadine.
-  // Sostituisci con il link del tuo form quando lo crei (vedi README).
-  urlSegnalazione: "#",
   center: [42.5, 12.5], // centro Italia
   zoomIniziale: 6,
 };
-
-document.getElementById("link-segnalazione").href = CONFIG.urlSegnalazione;
 
 const map = L.map("map", { zoomControl: true }).setView(CONFIG.center, CONFIG.zoomIniziale);
 
@@ -43,16 +52,38 @@ L.control.layers(
 ).addTo(map);
 
 const layerFuoco = L.layerGroup().addTo(map);
-const layerSegnalazioni = L.layerGroup().addTo(map);
+const layerSegnalazioni = L.layerGroup().addTo(map); // in attesa di verifica
+const layerVerificati = L.layerGroup().addTo(map);   // verificate da un coordinatore
 
 let datiFuoco = [];
 let datiSegnalazioni = [];
+let datiVerificati = [];
 let oreSelezionate = 48;
 
 function formatOra(iso){
   const d = new Date(iso);
   if (isNaN(d)) return iso;
   return d.toLocaleString("it-IT", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+}
+
+function decimaleInDMS(valore, tipo){
+  const lettera = tipo === "lat"
+    ? (valore >= 0 ? "N" : "S")
+    : (valore >= 0 ? "E" : "O");
+
+  const assoluto = Math.abs(valore);
+  const gradi = Math.floor(assoluto);
+  const minutiDecimali = (assoluto - gradi) * 60;
+  const minuti = Math.floor(minutiDecimali);
+  const secondi = ((minutiDecimali - minuti) * 60).toFixed(1);
+
+  return `${gradi}°${minuti}'${secondi}"${lettera}`;
+}
+
+function coordinateComplete(lat, lon){
+  const dms = `${decimaleInDMS(lat, "lat")} ${decimaleInDMS(lon, "lon")}`;
+  const decimali = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+  return { dms, decimali };
 }
 
 function coloreIntensita(frp){
@@ -67,16 +98,27 @@ function raggioIntensita(frp){
   return Math.min(18, 6 + frp / 8);
 }
 
-function entroIntervallo(iso, ore){
-  const d = new Date(iso).getTime();
-  if (isNaN(d)) return true;
-  return (Date.now() - d) <= ore * 3600 * 1000;
+function dataMillis(valore){
+  // Le date dei rilevamenti satellitari sono stringhe ISO; quelle delle
+  // segnalazioni Firestore sono Timestamp con .toDate(), oppure null se il
+  // server non ha ancora confermato il timestamp.
+  if (!valore) return Date.now();
+  if (typeof valore === "string") return new Date(valore).getTime();
+  if (valore.toDate) return valore.toDate().getTime();
+  return Date.now();
+}
+
+function entroIntervallo(valoreData, ore){
+  const ms = dataMillis(valoreData);
+  if (isNaN(ms)) return true;
+  return (Date.now() - ms) <= ore * 3600 * 1000;
 }
 
 function disegnaFuoco(){
   layerFuoco.clearLayers();
   const visibili = datiFuoco.filter(p => entroIntervallo(p.data_ora, oreSelezionate));
   visibili.forEach(p => {
+    const coord = coordinateComplete(p.lat, p.lon);
     const marker = L.circleMarker([p.lat, p.lon], {
       radius: raggioIntensita(p.frp),
       color: coloreIntensita(p.frp),
@@ -85,10 +127,12 @@ function disegnaFuoco(){
       weight: 1.5,
     }).bindPopup(
       `<b>Rilevamento satellitare</b><br>` +
-      `Data: ${formatOra(p.data_ora)}<br>` +
+      `Data e ora: ${formatOra(p.data_ora)}<br>` +
+      `Coordinate: ${coord.dms}<br>` +
+      `Coordinate (decimali): ${coord.decimali}<br>` +
       `Sensore: ${p.sensore || "n/d"}<br>` +
       `Confidenza: ${p.confidenza || "n/d"}<br>` +
-      `FRP (intensità): ${p.frp !== undefined ? p.frp + " MW" : "n/d"}`
+      `FRP (intensità): ${p.frp !== undefined && p.frp !== null ? p.frp + " MW" : "n/d"}`
     );
     layerFuoco.addLayer(marker);
   });
@@ -98,8 +142,9 @@ function disegnaFuoco(){
 
 function disegnaSegnalazioni(){
   layerSegnalazioni.clearLayers();
-  const visibili = datiSegnalazioni.filter(p => entroIntervallo(p.data_ora, oreSelezionate));
+  const visibili = datiSegnalazioni.filter(p => entroIntervallo(p.creato_il, oreSelezionate));
   visibili.forEach(p => {
+    const coord = coordinateComplete(p.lat, p.lon);
     const marker = L.circleMarker([p.lat, p.lon], {
       radius: 7,
       color: "#3E8E8E",
@@ -108,9 +153,10 @@ function disegnaSegnalazioni(){
       weight: 1.5,
       dashArray: "2,2",
     }).bindPopup(
-      `<b>Segnalazione cittadina (non verificata)</b><br>` +
-      `Data: ${formatOra(p.data_ora)}<br>` +
-      `${p.descrizione ? p.descrizione : ""}`
+      `<b>Segnalazione cittadina — in attesa di verifica</b><br>` +
+      `Coordinate: ${coord.dms}<br>` +
+      `Coordinate (decimali): ${coord.decimali}` +
+      `${p.descrizione ? "<br>Descrizione: " + p.descrizione : ""}`
     );
     layerSegnalazioni.addLayer(marker);
   });
@@ -118,14 +164,38 @@ function disegnaSegnalazioni(){
   return visibili;
 }
 
+function disegnaVerificati(){
+  layerVerificati.clearLayers();
+  const visibili = datiVerificati.filter(p => entroIntervallo(p.creato_il, oreSelezionate));
+  visibili.forEach(p => {
+    const coord = coordinateComplete(p.lat, p.lon);
+    const marker = L.circleMarker([p.lat, p.lon], {
+      radius: 8,
+      color: "#4CAF50",
+      fillColor: "#4CAF50",
+      fillOpacity: 0.6,
+      weight: 2,
+    }).bindPopup(
+      `<b>Incidente verificato da un coordinatore</b><br>` +
+      `Coordinate: ${coord.dms}<br>` +
+      `Coordinate (decimali): ${coord.decimali}` +
+      `${p.descrizione ? "<br>Descrizione: " + p.descrizione : ""}` +
+      `${p.verificato_da ? "<br>Verificato da: " + p.verificato_da : ""}`
+    );
+    layerVerificati.addLayer(marker);
+  });
+  return visibili;
+}
+
 function aggiornaLog(){
   const log = document.getElementById("event-log");
   const eventi = [
-    ...datiFuoco.map(p => ({ ...p, tipo: "fuoco" })),
-    ...datiSegnalazioni.map(p => ({ ...p, tipo: "segnalazione" })),
+    ...datiFuoco.map(p => ({ tipo: "fuoco", quando: p.data_ora, frp: p.frp })),
+    ...datiSegnalazioni.map(p => ({ tipo: "segnalazione", quando: p.creato_il })),
+    ...datiVerificati.map(p => ({ tipo: "verificato", quando: p.creato_il })),
   ]
-    .filter(e => entroIntervallo(e.data_ora, oreSelezionate))
-    .sort((a, b) => new Date(b.data_ora) - new Date(a.data_ora))
+    .filter(e => entroIntervallo(e.quando, oreSelezionate))
+    .sort((a, b) => dataMillis(b.quando) - dataMillis(a.quando))
     .slice(0, 40);
 
   if (eventi.length === 0){
@@ -133,10 +203,12 @@ function aggiornaLog(){
     return;
   }
 
+  const etichetta = { fuoco: "Rilevamento satellitare", segnalazione: "Segnalazione in attesa", verificato: "Incidente verificato" };
+
   log.innerHTML = eventi.map(e => `
-    <div class="log-entry ${e.tipo === "segnalazione" ? "segnalazione" : ""}">
-      <span class="log-time">${formatOra(e.data_ora)}</span>
-      ${e.tipo === "segnalazione" ? "Segnalazione cittadina" : `Rilevamento satellitare${e.frp ? " · " + e.frp + " MW" : ""}`}
+    <div class="log-entry ${e.tipo !== "fuoco" ? "segnalazione" : ""}">
+      <span class="log-time">${formatOra(typeof e.quando === "string" ? e.quando : (e.quando?.toDate ? e.quando.toDate().toISOString() : ""))}</span>
+      ${etichetta[e.tipo]}${e.frp ? " · " + e.frp + " MW" : ""}
     </div>
   `).join("");
 }
@@ -144,6 +216,7 @@ function aggiornaLog(){
 function ridisegnaTutto(){
   disegnaFuoco();
   disegnaSegnalazioni();
+  disegnaVerificati();
   aggiornaLog();
 }
 
@@ -157,6 +230,10 @@ document.getElementById("toggle-segnalazioni").addEventListener("change", (e) =>
   if (e.target.checked) map.addLayer(layerSegnalazioni); else map.removeLayer(layerSegnalazioni);
 });
 
+document.getElementById("toggle-verificati").addEventListener("change", (e) => {
+  if (e.target.checked) map.addLayer(layerVerificati); else map.removeLayer(layerVerificati);
+});
+
 document.querySelectorAll(".range-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     document.querySelectorAll(".range-btn").forEach(b => b.classList.remove("active"));
@@ -166,20 +243,88 @@ document.querySelectorAll(".range-btn").forEach(btn => {
   });
 });
 
+// --- Modulo di segnalazione cittadina ---
+
+const modale = document.getElementById("modale-segnalazione");
+document.getElementById("btn-apri-segnalazione").addEventListener("click", () => { modale.hidden = false; });
+document.getElementById("chiudi-modale-segnalazione").addEventListener("click", () => { modale.hidden = true; });
+modale.addEventListener("click", (e) => { if (e.target === modale) modale.hidden = true; });
+
+document.getElementById("btn-usa-posizione").addEventListener("click", () => {
+  if (!navigator.geolocation) {
+    alert("Il tuo browser non supporta la geolocalizzazione. Inserisci le coordinate a mano.");
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      document.getElementById("segnalazione-lat").value = pos.coords.latitude.toFixed(5);
+      document.getElementById("segnalazione-lon").value = pos.coords.longitude.toFixed(5);
+    },
+    () => alert("Non è stato possibile ottenere la tua posizione. Inserisci le coordinate a mano.")
+  );
+});
+
+document.getElementById("form-segnalazione-cittadino").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const messaggio = document.getElementById("messaggio-segnalazione-cittadino");
+  messaggio.hidden = true;
+
+  const lat = parseFloat(document.getElementById("segnalazione-lat").value);
+  const lon = parseFloat(document.getElementById("segnalazione-lon").value);
+  const descrizione = document.getElementById("segnalazione-descrizione").value.trim();
+
+  if (!db) {
+    messaggio.textContent = "Il sistema di segnalazione non è al momento disponibile.";
+    messaggio.hidden = false;
+    return;
+  }
+
+  try {
+    await addDoc(collection(db, "segnalazioni"), {
+      lat, lon, descrizione,
+      stato: "in_attesa",
+      creato_il: serverTimestamp(),
+    });
+    e.target.reset();
+    modale.hidden = true;
+    caricaSegnalazioni();
+  } catch (errore) {
+    console.error(errore);
+    messaggio.textContent = "Errore nell'invio. Riprova.";
+    messaggio.hidden = false;
+  }
+});
+
 // --- Caricamento dati ---
+
+async function caricaSegnalazioni(){
+  if (!db) return;
+  try {
+    const istantanea = await getDocs(collection(db, "segnalazioni"));
+    datiSegnalazioni = [];
+    datiVerificati = [];
+    istantanea.forEach(documento => {
+      const dati = documento.data();
+      if (dati.stato === "verificata") datiVerificati.push(dati);
+      else if (dati.stato === "in_attesa") datiSegnalazioni.push(dati);
+      // le "rifiutate" non vengono mostrate sulla mappa pubblica
+    });
+    disegnaSegnalazioni();
+    disegnaVerificati();
+    aggiornaLog();
+  } catch (errore) {
+    console.warn("Impossibile caricare le segnalazioni:", errore);
+  }
+}
 
 async function caricaDati(){
   document.getElementById("system-status").textContent = "caricamento dati…";
   try {
-    const [risFuoco, risSegnalazioni] = await Promise.allSettled([
-      fetch("data/incendi-attivi.json", { cache: "no-store" }).then(r => r.json()),
-      fetch("data/segnalazioni.json", { cache: "no-store" }).then(r => r.json()),
-    ]);
+    const risFuoco = await fetch("data/incendi-attivi.json", { cache: "no-store" }).then(r => r.json());
 
-    datiFuoco = risFuoco.status === "fulfilled" ? risFuoco.value.rilevamenti || risFuoco.value : [];
-    datiSegnalazioni = risSegnalazioni.status === "fulfilled" ? risSegnalazioni.value.segnalazioni || risSegnalazioni.value : [];
+    datiFuoco = risFuoco.rilevamenti || risFuoco;
 
-    const timestamp = (risFuoco.status === "fulfilled" && risFuoco.value.aggiornato_il) || new Date().toISOString();
+    const timestamp = risFuoco.aggiornato_il || new Date().toISOString();
     document.getElementById("last-update").textContent = formatOra(timestamp);
     document.getElementById("system-status").textContent = "attivo";
 
@@ -191,5 +336,7 @@ async function caricaDati(){
 }
 
 caricaDati();
-// Ricontrolla i dati ogni 15 minuti (i dati stessi si aggiornano ogni poche ore via GitHub Action)
+caricaSegnalazioni();
+// Ricontrolla i dati ogni 15 minuti (i dati satellitari si aggiornano ogni poche ore via GitHub Action)
 setInterval(caricaDati, 15 * 60 * 1000);
+setInterval(caricaSegnalazioni, 5 * 60 * 1000);
