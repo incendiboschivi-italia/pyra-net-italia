@@ -40,38 +40,36 @@
       <p id="profilo-dettagli" class="mono"></p>
     </section>
 
+    <section class="riquadro" id="riquadro-verifica">
+      <h2>Coda di verifica — segnalazioni in attesa</h2>
+      <p class="panel-note">Solo i coordinatori Interregionali, Regionali o Provinciali possono verificare o rifiutare una segnalazione.</p>
+      <div id="lista-in-attesa" class="mono">Caricamento…</div>
+    </section>
+
     <section class="riquadro">
-      <h2>Direttore coordinatori</h2>
+      <h2>Direttorio coordinatori</h2>
       <div id="lista-coordinatori" class="mono">Caricamento…</div>
     </section>
 
     <section class="riquadro">
-      <h2>Segnala un incendio verificato</h2>
-      <p class="panel-note">Questo incendio comparirà anche sulla mappa pubblica, contrassegnato come "verificato da un coordinatore".</p>
-      <form id="form-incendio" class="form-incendio">
+      <h2>Segnala direttamente un incidente già verificato</h2>
+      <p class="panel-note">Usa questo modulo solo se hai constatato tu stesso l'incidente (non serve passare dalla coda di verifica). Comparirà subito sulla mappa pubblica come "verificato".</p>
+      <form id="form-incidente" class="form-incidente">
         <label>
           <span>Latitudine</span>
-          <input type="number" step="any" id="incendio-lat" required placeholder="es. 43.7696">
+          <input type="number" step="any" id="incidente-lat" required placeholder="es. 43.7696">
         </label>
         <label>
           <span>Longitudine</span>
-          <input type="number" step="any" id="incendio-lon" required placeholder="es. 11.2558">
-        </label>
-        <label>
-          <span>Gravità</span>
-          <select id="incendio-gravita">
-            <option value="bassa">Bassa</option>
-            <option value="media" selected>Media</option>
-            <option value="alta">Alta</option>
-          </select>
+          <input type="number" step="any" id="incidente-lon" required placeholder="es. 11.2558">
         </label>
         <label>
           <span>Descrizione</span>
-          <textarea id="incendio-descrizione" rows="3" placeholder="Cosa sta succedendo, punti di riferimento, ecc."></textarea>
+          <textarea id="incidente-descrizione" rows="3" placeholder="Cosa sta succedendo, punti di riferimento, ecc."></textarea>
         </label>
         <button type="submit" class="btn-report" style="width:auto;">Pubblica sulla mappa</button>
       </form>
-      <p id="messaggio-incendio" class="messaggio-errore" hidden></p>
+      <p id="messaggio-incidente" class="messaggio-errore" hidden></p>
     </section>
 
     <section class="riquadro">
@@ -86,12 +84,20 @@
 <script type="module">
   import { auth, esci, osservaStatoAccesso, leggiProfiloCoordinatore, db } from "./assets/auth.js";
   import {
-    collection, getDocs, addDoc, query, orderBy, limit, serverTimestamp
+    collection, getDocs, addDoc, updateDoc, doc, query, where, orderBy, limit, serverTimestamp
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const blocoNonAutorizzato = document.getElementById("blocco-non-autorizzato");
   const contenutoRiservato = document.getElementById("contenuto-riservato");
   const nomeUtente = document.getElementById("nome-utente");
+  const riquadroVerifica = document.getElementById("riquadro-verifica");
+
+  let profiloCorrente = null;
+
+  function puoVerificare(profilo){
+    if (!profilo || !profilo.ruolo) return false;
+    return /interregionale/i.test(profilo.ruolo) || /regionale/i.test(profilo.ruolo) || /provinciale/i.test(profilo.ruolo);
+  }
 
   osservaStatoAccesso(async (utente) => {
     if (!utente) {
@@ -107,13 +113,21 @@
       return;
     }
 
+    profiloCorrente = profilo;
     contenutoRiservato.hidden = false;
     nomeUtente.textContent = profilo.nome || utente.email;
 
     document.getElementById("profilo-dettagli").textContent =
       `${profilo.nome || "n/d"} — ${profilo.ruolo || "n/d"} (${profilo.zona || "n/d"})`;
 
-    caricaDirettore();
+    if (!puoVerificare(profilo)) {
+      riquadroVerifica.querySelector("#lista-in-attesa").textContent =
+        "Il tuo ruolo (" + (profilo.ruolo || "n/d") + ") non può verificare segnalazioni.";
+    } else {
+      caricaCodaVerifica();
+    }
+
+    caricaDirettorio();
     caricaIncidenti();
   });
 
@@ -122,7 +136,7 @@
     window.location.href = "login.html";
   });
 
-  async function caricaDirettore(){
+  async function caricaDirettorio(){
     const contenitore = document.getElementById("lista-coordinatori");
     try {
       const istantanea = await getDocs(collection(db, "coordinatori"));
@@ -139,9 +153,70 @@
       });
     } catch (errore) {
       console.error(errore);
-      contenitore.textContent = "Impossibile caricare il direttore.";
+      contenitore.textContent = "Impossibile caricare il direttorio.";
     }
   }
+
+  // --- Coda di verifica (solo Regionali/Provinciali) ---
+
+  async function caricaCodaVerifica(){
+    const contenitore = document.getElementById("lista-in-attesa");
+    try {
+      const q = query(collection(db, "segnalazioni"), where("stato", "==", "in_attesa"));
+      const istantanea = await getDocs(q);
+      if (istantanea.empty) {
+        contenitore.textContent = "Nessuna segnalazione in attesa di verifica.";
+        return;
+      }
+      contenitore.innerHTML = "";
+      istantanea.forEach(documento => {
+        const s = documento.data();
+        const riga = document.createElement("div");
+        riga.style.borderBottom = "1px solid var(--border)";
+        riga.style.padding = "0.6rem 0";
+
+        const testo = document.createElement("p");
+        testo.textContent = `${s.lat}, ${s.lon} — ${s.descrizione || "(nessuna descrizione)"}`;
+        riga.appendChild(testo);
+
+        const btnVerifica = document.createElement("button");
+        btnVerifica.textContent = "✓ Verifica";
+        btnVerifica.className = "btn-report";
+        btnVerifica.style.cssText = "width:auto; padding:0.3rem 0.8rem; margin-right:0.5rem; background:#4CAF50; color:#0A0D0C;";
+        btnVerifica.addEventListener("click", () => aggiornaStatoSegnalazione(documento.id, "verificata"));
+
+        const btnRifiuta = document.createElement("button");
+        btnRifiuta.textContent = "✕ Rifiuta";
+        btnRifiuta.className = "btn-report";
+        btnRifiuta.style.cssText = "width:auto; padding:0.3rem 0.8rem; background:var(--accent-critico); color:#fff;";
+        btnRifiuta.addEventListener("click", () => aggiornaStatoSegnalazione(documento.id, "rifiutata"));
+
+        riga.appendChild(btnVerifica);
+        riga.appendChild(btnRifiuta);
+        contenitore.appendChild(riga);
+      });
+    } catch (errore) {
+      console.error(errore);
+      contenitore.textContent = "Impossibile caricare la coda di verifica.";
+    }
+  }
+
+  async function aggiornaStatoSegnalazione(idDocumento, nuovoStato){
+    try {
+      await updateDoc(doc(db, "segnalazioni", idDocumento), {
+        stato: nuovoStato,
+        verificato_da: profiloCorrente?.nome || auth.currentUser.email,
+        verificato_il: serverTimestamp(),
+      });
+      caricaCodaVerifica();
+      caricaIncidenti();
+    } catch (errore) {
+      console.error(errore);
+      alert("Errore nell'aggiornamento della segnalazione.");
+    }
+  }
+
+  // --- Segnalazione diretta di un incidente già verificato ---
 
   document.getElementById("form-incidente").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -150,18 +225,17 @@
 
     const lat = parseFloat(document.getElementById("incidente-lat").value);
     const lon = parseFloat(document.getElementById("incidente-lon").value);
-    const gravita = document.getElementById("incidente-gravita").value;
     const descrizione = document.getElementById("incidente-descrizione").value.trim();
 
     try {
-      const profilo = await leggiProfiloCoordinatore(auth.currentUser.uid);
-      await addDoc(collection(db, "incidenti_verificati"), {
-        lat, lon, gravita, descrizione,
-        coordinatore_nome: profilo?.nome || auth.currentUser.email,
+      await addDoc(collection(db, "segnalazioni"), {
+        lat, lon, descrizione,
+        stato: "in_attesa", // passa comunque dalla coda: se il tuo ruolo può verificare, aggiornala subito sotto
         creato_il: serverTimestamp(),
       });
       e.target.reset();
-      caricaIncidenti();
+      if (puoVerificare(profiloCorrente)) caricaCodaVerifica();
+      alert("Segnalazione registrata. Se il tuo ruolo può verificarla, comparirà nella coda di verifica qui sopra.");
     } catch (errore) {
       console.error(errore);
       messaggio.textContent = "Errore nel salvataggio. Riprova.";
@@ -172,17 +246,17 @@
   async function caricaIncidenti(){
     const contenitore = document.getElementById("lista-incidenti");
     try {
-      const q = query(collection(db, "incidenti_verificati"), orderBy("creato_il", "desc"), limit(20));
+      const q = query(collection(db, "segnalazioni"), where("stato", "==", "verificata"), orderBy("creato_il", "desc"), limit(20));
       const istantanea = await getDocs(q);
       if (istantanea.empty) {
-        contenitore.textContent = "Nessun incidente verificato ancora inserito.";
+        contenitore.textContent = "Nessun incidente verificato ancora presente.";
         return;
       }
       contenitore.innerHTML = "";
       istantanea.forEach(documento => {
         const i = documento.data();
         const riga = document.createElement("p");
-        riga.textContent = `[${i.gravita}] ${i.lat}, ${i.lon} — ${i.descrizione || "(nessuna descrizione)"} — ${i.coordinatore_nome}`;
+        riga.textContent = `${i.lat}, ${i.lon} — ${i.descrizione || "(nessuna descrizione)"} — verificato da ${i.verificato_da || "n/d"}`;
         contenitore.appendChild(riga);
       });
     } catch (errore) {
