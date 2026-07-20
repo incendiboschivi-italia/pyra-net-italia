@@ -251,6 +251,50 @@ document.getElementById("chiudi-modale-segnalazione").addEventListener("click", 
 modale.addEventListener("click", (e) => { if (e.target === modale) modale.hidden = true; });
 document.addEventListener("keydown", (e) => { if (e.key === "Escape") modale.hidden = true; });
 
+// --- Selezione del punto direttamente sulla mappa ---
+
+const bannerSelezione = document.getElementById("banner-selezione-punto");
+let markerSelezioneTemp = null;
+let inModalitaSelezione = false;
+
+function avviaSelezionePunto(){
+  modale.hidden = true;
+  bannerSelezione.hidden = false;
+  inModalitaSelezione = true;
+  document.getElementById("map").style.cursor = "crosshair";
+}
+
+function terminaSelezionePunto(){
+  bannerSelezione.hidden = true;
+  inModalitaSelezione = false;
+  document.getElementById("map").style.cursor = "";
+}
+
+document.getElementById("btn-scegli-su-mappa").addEventListener("click", avviaSelezionePunto);
+
+document.getElementById("btn-annulla-selezione").addEventListener("click", () => {
+  terminaSelezionePunto();
+  modale.hidden = false;
+});
+
+map.on("click", (e) => {
+  if (!inModalitaSelezione) return;
+
+  document.getElementById("segnalazione-lat").value = e.latlng.lat.toFixed(5);
+  document.getElementById("segnalazione-lon").value = e.latlng.lng.toFixed(5);
+
+  if (markerSelezioneTemp) map.removeLayer(markerSelezioneTemp);
+  markerSelezioneTemp = L.marker(e.latlng, { draggable: true }).addTo(map);
+  markerSelezioneTemp.on("dragend", () => {
+    const pos = markerSelezioneTemp.getLatLng();
+    document.getElementById("segnalazione-lat").value = pos.lat.toFixed(5);
+    document.getElementById("segnalazione-lon").value = pos.lng.toFixed(5);
+  });
+
+  terminaSelezionePunto();
+  modale.hidden = false;
+});
+
 document.getElementById("btn-usa-posizione").addEventListener("click", () => {
   if (!navigator.geolocation) {
     alert("Il tuo browser non supporta la geolocalizzazione. Inserisci le coordinate a mano.");
@@ -288,6 +332,7 @@ document.getElementById("form-segnalazione-cittadino").addEventListener("submit"
     });
     e.target.reset();
     modale.hidden = true;
+    if (markerSelezioneTemp) { map.removeLayer(markerSelezioneTemp); markerSelezioneTemp = null; }
     caricaSegnalazioni();
   } catch (errore) {
     console.error(errore);
