@@ -1,5 +1,5 @@
 {
-  "aggiornato_il": "2026-07-20T19:59:06.443759+00:00",
+  "aggiornato_il": "2026-07-20T22:15:23.700125+00:00",
   "fonte": "NASA FIRMS (VIIRS/MODIS, NRT) — filtrato sui confini reali dell'Italia, esclusi i falsi positivi industriali noti",
   "rilevamenti": [
     {
@@ -5840,6 +5840,110 @@
       "data_ora": "2026-07-20T18:36:00+00:00",
       "frp": 13.4,
       "confidenza": "52",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.5151,
+      "lon": 13.7168,
+      "data_ora": "2026-07-20T20:14:00+00:00",
+      "frp": 39.2,
+      "confidenza": "58",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.5215,
+      "lon": 13.7097,
+      "data_ora": "2026-07-20T20:14:00+00:00",
+      "frp": 42.6,
+      "confidenza": "61",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.6146,
+      "lon": 13.0173,
+      "data_ora": "2026-07-20T20:14:00+00:00",
+      "frp": 89.4,
+      "confidenza": "98",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.6164,
+      "lon": 13.0561,
+      "data_ora": "2026-07-20T20:14:00+00:00",
+      "frp": 36.1,
+      "confidenza": "67",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.6258,
+      "lon": 13.0485,
+      "data_ora": "2026-07-20T20:14:00+00:00",
+      "frp": 86.1,
+      "confidenza": "98",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.6323,
+      "lon": 13.4222,
+      "data_ora": "2026-07-20T20:14:00+00:00",
+      "frp": 161.0,
+      "confidenza": "100",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.6323,
+      "lon": 13.0561,
+      "data_ora": "2026-07-20T20:14:00+00:00",
+      "frp": 58.9,
+      "confidenza": "85",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.6342,
+      "lon": 13.4674,
+      "data_ora": "2026-07-20T20:14:00+00:00",
+      "frp": 47.0,
+      "confidenza": "64",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.6397,
+      "lon": 13.4102,
+      "data_ora": "2026-07-20T20:14:00+00:00",
+      "frp": 59.9,
+      "confidenza": "77",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.6414,
+      "lon": 13.4554,
+      "data_ora": "2026-07-20T20:14:00+00:00",
+      "frp": 37.3,
+      "confidenza": "45",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.763,
+      "lon": 13.45,
+      "data_ora": "2026-07-20T20:14:00+00:00",
+      "frp": 66.6,
+      "confidenza": "77",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.7721,
+      "lon": 13.4563,
+      "data_ora": "2026-07-20T20:14:00+00:00",
+      "frp": 65.7,
+      "confidenza": "76",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.7741,
+      "lon": 13.5014,
+      "data_ora": "2026-07-20T20:14:00+00:00",
+      "frp": 39.0,
+      "confidenza": "44",
       "sensore": "MODIS"
     }
   ]
