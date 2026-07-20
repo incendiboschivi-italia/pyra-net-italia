@@ -301,32 +301,14 @@ a{ color: var(--accent-fuoco); }
   border-top: 1px solid var(--border);
 }
 
-.banner-selezione{
-  position: fixed;
-  top: 70px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--accent-info);
-  color: #0A0D0C;
-  padding: 0.7rem 1.2rem;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  z-index: 900;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+.btn-selezione-attiva{
+  background: var(--accent-info) !important;
+  animation: pulsazione-selezione 1.4s ease-in-out infinite;
 }
 
-.banner-selezione button{
-  background: rgba(0,0,0,0.2);
-  border: none;
-  color: inherit;
-  padding: 0.3rem 0.7rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 600;
+@keyframes pulsazione-selezione{
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
 }
 
 /* ---------- Modale di segnalazione ---------- */
@@ -508,4 +490,5 @@ a{ color: var(--accent-fuoco); }
 
 @media (prefers-reduced-motion: reduce){
   *{ scroll-behavior: auto !important; }
+  .btn-selezione-attiva{ animation: none !important; }
 }
