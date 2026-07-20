@@ -477,15 +477,16 @@ a{ color: var(--accent-fuoco); }
 @media (max-width: 900px){
   .app{
     grid-template-columns: 1fr;
-    grid-template-rows: auto 55vh auto;
+    grid-template-rows: minmax(230px, auto) 50vh minmax(170px, auto);
   }
   .panel{
     border-right: none;
     border-bottom: 1px solid var(--border);
-    max-height: 220px;
+    min-height: 230px;
+    max-height: 230px;
   }
-  .panel-right{ border-left: none; }
-  .log{ max-height: 160px; }
+  .panel-right{ border-left: none; min-height: 170px; max-height: 170px; }
+  .log{ max-height: 130px; }
 
   /* Aree cliccabili più grandi per le dita */
   .range-btn{ padding: 0.6rem 0.3rem; }
