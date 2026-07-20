@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-  
+
 <header class="topbar">
   <div class="brand">
     <span class="brand-mark" aria-hidden="true"></span>
@@ -52,8 +52,8 @@
     </section>
 
     <section class="riquadro">
-      <h2>Segnala direttamente un incidente già verificato</h2>
-      <p class="panel-note">Usa questo modulo solo se hai constatato tu stesso l'incidente (non serve passare dalla coda di verifica). Comparirà subito sulla mappa pubblica come "verificato".</p>
+      <h2>Segnala direttamente un incendio già verificato</h2>
+      <p class="panel-note">Usa questo modulo solo se hai constatato tu stesso l'incendio (non serve passare dalla coda di verifica). Comparirà subito sulla mappa pubblica come "verificato".</p>
       <form id="form-incidente" class="form-incidente">
         <label>
           <span>Latitudine</span>
@@ -73,7 +73,7 @@
     </section>
 
     <section class="riquadro">
-      <h2>Incidenti verificati recenti</h2>
+      <h2>Incendi verificati recenti</h2>
       <div id="lista-incidenti" class="mono">Caricamento…</div>
     </section>
 
@@ -249,7 +249,7 @@
       const q = query(collection(db, "segnalazioni"), where("stato", "==", "verificata"), orderBy("creato_il", "desc"), limit(20));
       const istantanea = await getDocs(q);
       if (istantanea.empty) {
-        contenitore.textContent = "Nessun incidente verificato ancora presente.";
+        contenitore.textContent = "Nessun incendio verificato ancora presente.";
         return;
       }
       contenitore.innerHTML = "";
@@ -261,7 +261,7 @@
       });
     } catch (errore) {
       console.error(errore);
-      contenitore.textContent = "Impossibile caricare gli incidenti.";
+      contenitore.textContent = "Impossibile caricare gli incendi.";
     }
   }
 </script>
