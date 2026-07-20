@@ -403,7 +403,7 @@ a{ color: var(--accent-fuoco); }
   padding: 0.6rem;
   border-radius: 5px;
   font-family: var(--font-body);
-  font-size: 0.9rem;
+  font-size: 16px; /* non 0.9rem: sotto i 16px iOS zooma automaticamente il campo */
 }
 
 .messaggio-errore{
@@ -462,7 +462,7 @@ a{ color: var(--accent-fuoco); }
   padding: 0.5rem;
   border-radius: 5px;
   font-family: var(--font-body);
-  font-size: 0.85rem;
+  font-size: 16px; /* non 0.85rem: sotto i 16px iOS zooma automaticamente il campo */
 }
 
 #lista-coordinatori p,
@@ -486,6 +486,23 @@ a{ color: var(--accent-fuoco); }
   }
   .panel-right{ border-left: none; }
   .log{ max-height: 160px; }
+
+  /* Aree cliccabili più grandi per le dita */
+  .range-btn{ padding: 0.6rem 0.3rem; }
+  .btn-report{ padding: 0.75rem; min-height: 44px; }
+  .layer-toggle{ padding: 0.6rem 0; }
+  .layer-toggle input[type="checkbox"]{ width: 20px; height: 20px; }
+
+  .modale-contenuto{ padding: 1.25rem; }
+
+  /* Il pannello dei livelli mappa (Topografica/Satellitare) non deve
+     restringersi troppo su schermi molto piccoli */
+  .leaflet-control-layers{ font-size: 0.85rem; }
+}
+
+/* Tutti gli elementi cliccabili: niente ritardo del doppio-tap su mobile */
+button, .btn-report, a{
+  touch-action: manipulation;
 }
 
 @media (prefers-reduced-motion: reduce){
