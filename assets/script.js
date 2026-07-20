@@ -246,35 +246,43 @@ document.querySelectorAll(".range-btn").forEach(btn => {
 // --- Modulo di segnalazione cittadina ---
 
 const modale = document.getElementById("modale-segnalazione");
-document.getElementById("btn-apri-segnalazione").addEventListener("click", () => { modale.hidden = false; });
 document.getElementById("chiudi-modale-segnalazione").addEventListener("click", () => { modale.hidden = true; });
 modale.addEventListener("click", (e) => { if (e.target === modale) modale.hidden = true; });
 document.addEventListener("keydown", (e) => { if (e.key === "Escape") modale.hidden = true; });
 
 // --- Selezione del punto direttamente sulla mappa ---
 
-const bannerSelezione = document.getElementById("banner-selezione-punto");
+const btnSegnalaSidebar = document.getElementById("btn-apri-segnalazione");
+const testoOriginaleBtnSidebar = btnSegnalaSidebar.textContent;
 let markerSelezioneTemp = null;
 let inModalitaSelezione = false;
 
 function avviaSelezionePunto(){
   modale.hidden = true;
-  bannerSelezione.hidden = false;
   inModalitaSelezione = true;
   document.getElementById("map").style.cursor = "crosshair";
+  btnSegnalaSidebar.textContent = "📍 Clicca sulla mappa nel punto dell'incendio (Annulla)";
+  btnSegnalaSidebar.classList.add("btn-selezione-attiva");
 }
 
 function terminaSelezionePunto(){
-  bannerSelezione.hidden = true;
   inModalitaSelezione = false;
   document.getElementById("map").style.cursor = "";
+  btnSegnalaSidebar.textContent = testoOriginaleBtnSidebar;
+  btnSegnalaSidebar.classList.remove("btn-selezione-attiva");
 }
 
 document.getElementById("btn-scegli-su-mappa").addEventListener("click", avviaSelezionePunto);
 
-document.getElementById("btn-annulla-selezione").addEventListener("click", () => {
-  terminaSelezionePunto();
-  modale.hidden = false;
+// Mentre la selezione è attiva, ricliccare questo stesso pulsante annulla
+// invece di riaprire il modulo (il modulo è già chiuso in quel momento).
+btnSegnalaSidebar.addEventListener("click", () => {
+  if (inModalitaSelezione) {
+    terminaSelezionePunto();
+    modale.hidden = false;
+  } else {
+    modale.hidden = false;
+  }
 });
 
 map.on("click", (e) => {
