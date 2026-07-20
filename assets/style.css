@@ -314,6 +314,10 @@ a{ color: var(--accent-fuoco); }
   padding: 1rem;
 }
 
+.modale[hidden]{
+  display: none;
+}
+
 .modale-contenuto{
   background: var(--surface);
   border: 1px solid var(--border);
