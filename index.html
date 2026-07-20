@@ -86,6 +86,11 @@
 
   <div id="map"></div>
 
+  <div id="banner-selezione-punto" class="banner-selezione" hidden>
+    📍 Clicca sulla mappa nel punto dell'incendio
+    <button type="button" id="btn-annulla-selezione">Annulla</button>
+  </div>
+
   <aside class="panel panel-right">
     <h2>Registro rilevamenti</h2>
     <div class="log" id="event-log">
@@ -101,6 +106,7 @@
     <h2>Segnala un incendio</h2>
     <p class="panel-note">La tua segnalazione comparirà sulla mappa come "in attesa di verifica" finché un coordinatore regionale o provinciale non la conferma.</p>
     <form id="form-segnalazione-cittadino" class="form-incidente">
+      <button type="button" id="btn-scegli-su-mappa" class="btn-report" style="width:100%; margin-bottom:1rem; background:var(--accent-info);">📍 Scegli il punto sulla mappa</button>
       <label>
         <span>Latitudine</span>
         <input type="number" step="any" id="segnalazione-lat" required placeholder="es. 43.7696">
