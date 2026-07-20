@@ -45,10 +45,13 @@ service cloud.firestore {
       allow read: if true;
 
       // Chiunque (anche senza login) può creare una segnalazione, ma SOLO
-      // con stato "in_attesa": nessuno può auto-dichiararsi "verificato".
+      // con stato "in_attesa", con coordinate numeriche e una descrizione
+      // non vuota: nessuno può auto-dichiararsi "verificato".
       allow create: if request.resource.data.stato == 'in_attesa'
                     && request.resource.data.lat is number
-                    && request.resource.data.lon is number;
+                    && request.resource.data.lon is number
+                    && request.resource.data.descrizione is string
+                    && request.resource.data.descrizione.size() > 0;
 
       // Solo un coordinatore Regionale o Provinciale può cambiare lo stato
       // (verificare o rifiutare). Un Interregionale non può.
