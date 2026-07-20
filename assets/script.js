@@ -249,6 +249,7 @@ const modale = document.getElementById("modale-segnalazione");
 document.getElementById("btn-apri-segnalazione").addEventListener("click", () => { modale.hidden = false; });
 document.getElementById("chiudi-modale-segnalazione").addEventListener("click", () => { modale.hidden = true; });
 modale.addEventListener("click", (e) => { if (e.target === modale) modale.hidden = true; });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") modale.hidden = true; });
 
 document.getElementById("btn-usa-posizione").addEventListener("click", () => {
   if (!navigator.geolocation) {
