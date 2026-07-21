@@ -43,7 +43,7 @@
 
     <section class="riquadro" id="riquadro-verifica">
       <h2>Coda di verifica — segnalazioni in attesa</h2>
-      <p class="panel-note">Solo i coordinatori Interregionali, Regionali o Provinciali possono verificare o rifiutare una segnalazione.</p>
+      <p class="panel-note">Vedi solo le segnalazioni della tua zona di competenza: Interregionale vede le regioni della sua macro-area, Regionale la sua regione, Provinciale la sua provincia.</p>
       <div id="lista-in-attesa" class="mono">Caricamento…</div>
     </section>
 
@@ -54,7 +54,7 @@
 
     <section class="riquadro">
       <h2>Segnala direttamente un incendio già verificato</h2>
-      <p class="panel-note">Usa questo modulo solo se hai constatato tu stesso l'incendio (non serve passare dalla coda di verifica). Comparirà subito sulla mappa pubblica come "verificato".</p>
+      <p class="panel-note">Usa questo modulo solo se hai constatato tu stesso l'incendio (non serve passare dalla coda di verifica). Comparirà subito sulla mappa pubblica come "verificato". Puoi farlo solo per punti dentro la tua zona di competenza.</p>
       <form id="form-incidente" class="form-incidente">
         <label>
           <span>Latitudine</span>
@@ -88,6 +88,7 @@
 
 <script type="module">
   import { auth, esci, osservaStatoAccesso, leggiProfiloCoordinatore, db } from "./assets/auth.js";
+  import { determinaZona, areaInterregionaleDellaRegione, REGIONI_PER_AREA } from "./assets/geocodifica.js";
   import {
     collection, getDocs, addDoc, updateDoc, doc, query, where, orderBy, limit, serverTimestamp
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -162,39 +163,74 @@
     }
   }
 
-  // --- Coda di verifica (solo Regionali/Provinciali) ---
+  // --- Coda di verifica (filtrata per zona di competenza) ---
+
+  function costruisciQueryCoda(profilo){
+    const base = collection(db, "segnalazioni");
+    const ruolo = profilo.ruolo || "";
+    const zona = profilo.zona || "";
+
+    if (/provinciale/i.test(ruolo)) {
+      return query(base, where("stato", "==", "in_attesa"), where("provincia", "==", zona));
+    }
+    if (/interregionale/i.test(ruolo)) {
+      const regioni = REGIONI_PER_AREA[zona] || [];
+      // Firestore "in" accetta al massimo 10 valori: ogni macro-area ne ha 4-8, va bene.
+      return query(base, where("stato", "==", "in_attesa"), where("regione", "in", regioni));
+    }
+    if (/regionale/i.test(ruolo)) {
+      return query(base, where("stato", "==", "in_attesa"), where("regione", "==", zona));
+    }
+    return null;
+  }
 
   async function caricaCodaVerifica(){
     const contenitore = document.getElementById("lista-in-attesa");
     try {
-      const q = query(collection(db, "segnalazioni"), where("stato", "==", "in_attesa"));
+      const q = costruisciQueryCoda(profiloCorrente);
+      if (!q) { contenitore.textContent = "Ruolo non riconosciuto."; return; }
+
+      const documenti = [];
       const istantanea = await getDocs(q);
-      if (istantanea.empty) {
-        contenitore.textContent = "Nessuna segnalazione in attesa di verifica.";
+      istantanea.forEach(d => documenti.push({ id: d.id, dati: d.data() }));
+
+      // Rete di sicurezza: le segnalazioni senza regione determinata (la
+      // geocodifica automatica può occasionalmente fallire) sono mostrate
+      // anche agli Interregionali, così nessuna resta bloccata per sempre.
+      if (/interregionale/i.test(profiloCorrente.ruolo || "")) {
+        const qNonClassificate = query(collection(db, "segnalazioni"), where("stato", "==", "in_attesa"), where("regione", "==", null));
+        const istantaneaExtra = await getDocs(qNonClassificate);
+        istantaneaExtra.forEach(d => {
+          if (!documenti.find(x => x.id === d.id)) documenti.push({ id: d.id, dati: d.data() });
+        });
+      }
+
+      if (documenti.length === 0) {
+        contenitore.textContent = "Nessuna segnalazione in attesa di verifica nella tua zona.";
         return;
       }
       contenitore.innerHTML = "";
-      istantanea.forEach(documento => {
-        const s = documento.data();
+      documenti.forEach(({ id, dati: s }) => {
         const riga = document.createElement("div");
         riga.style.borderBottom = "1px solid var(--border)";
         riga.style.padding = "0.6rem 0";
 
         const testo = document.createElement("p");
-        testo.textContent = `${s.lat}, ${s.lon} — ${s.descrizione || "(nessuna descrizione)"}`;
+        const zonaTesto = [s.provincia, s.regione].filter(Boolean).join(", ") || "zona non determinata";
+        testo.textContent = `${s.lat}, ${s.lon} (${zonaTesto}) — ${s.descrizione || "(nessuna descrizione)"}`;
         riga.appendChild(testo);
 
         const btnVerifica = document.createElement("button");
         btnVerifica.textContent = "✓ Verifica";
         btnVerifica.className = "btn-report";
         btnVerifica.style.cssText = "width:auto; padding:0.3rem 0.8rem; margin-right:0.5rem; background:#4CAF50; color:#0A0D0C;";
-        btnVerifica.addEventListener("click", () => aggiornaStatoSegnalazione(documento.id, "verificata"));
+        btnVerifica.addEventListener("click", () => aggiornaStatoSegnalazione(id, "verificata"));
 
         const btnRifiuta = document.createElement("button");
         btnRifiuta.textContent = "✕ Rifiuta";
         btnRifiuta.className = "btn-report";
         btnRifiuta.style.cssText = "width:auto; padding:0.3rem 0.8rem; background:var(--accent-critico); color:#fff;";
-        btnRifiuta.addEventListener("click", () => aggiornaStatoSegnalazione(documento.id, "rifiutata"));
+        btnRifiuta.addEventListener("click", () => aggiornaStatoSegnalazione(id, "rifiutata"));
 
         riga.appendChild(btnVerifica);
         riga.appendChild(btnRifiuta);
@@ -232,19 +268,31 @@
     const lon = parseFloat(document.getElementById("incidente-lon").value);
     const descrizione = document.getElementById("incidente-descrizione").value.trim();
 
+    const bottone = e.target.querySelector('button[type="submit"]');
+    const testoOriginale = bottone.textContent;
+    bottone.textContent = "Determinazione della zona…";
+    bottone.disabled = true;
+
     try {
+      const { regione, provincia } = await determinaZona(lat, lon);
+
       await addDoc(collection(db, "segnalazioni"), {
         lat, lon, descrizione,
-        stato: "in_attesa", // passa comunque dalla coda: se il tuo ruolo può verificare, aggiornala subito sotto
+        stato: "verificata",
+        regione, provincia,
+        verificato_da: profiloCorrente?.nome || auth.currentUser.email,
+        verificato_il: serverTimestamp(),
         creato_il: serverTimestamp(),
       });
       e.target.reset();
-      if (puoVerificare(profiloCorrente)) caricaCodaVerifica();
-      alert("Segnalazione registrata. Se il tuo ruolo può verificarla, comparirà nella coda di verifica qui sopra.");
+      caricaIncidenti();
     } catch (errore) {
       console.error(errore);
-      messaggio.textContent = "Errore nel salvataggio. Riprova.";
+      messaggio.textContent = "Errore nel salvataggio. Se il punto non rientra nella tua zona di competenza (" + (profiloCorrente?.zona || "n/d") + "), il sistema lo rifiuta di proposito.";
       messaggio.hidden = false;
+    } finally {
+      bottone.textContent = testoOriginale;
+      bottone.disabled = false;
     }
   });
 
