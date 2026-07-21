@@ -1,15 +1,8 @@
 rules_version = '2';
 
-// Queste regole sono il VERO meccanismo di sicurezza del sistema (non il
-// codice del sito, che chiunque può leggere). Vanno incollate in:
-// Console Firebase → Firestore Database → Regole.
-
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Un utente è un "coordinatore" solo se esiste un documento con il suo
-    // stesso UID nella collezione coordinatori. Questi documenti li crea
-    // SOLO Gabriele a mano dalla console Firebase, mai il sito.
     function isCoordinatore() {
       return request.auth != null &&
         exists(/databases/$(database)/documents/coordinatori/$(request.auth.uid));
@@ -19,48 +12,65 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/coordinatori/$(request.auth.uid)).data.ruolo;
     }
 
-    // I coordinatori Interregionali, Regionali o Provinciali possono
-    // verificare o rifiutare una segnalazione.
-    function puoVerificare() {
-      return isCoordinatore() &&
-        (ruoloCoordinatore().matches('.*[Ii]nterregionale.*') ||
-         ruoloCoordinatore().matches('.*[Rr]egionale.*') ||
-         ruoloCoordinatore().matches('.*[Pp]rovinciale.*'));
+    function zonaCoordinatore() {
+      return get(/databases/$(database)/documents/coordinatori/$(request.auth.uid)).data.zona;
+    }
+function eInterregionale() { return ruoloCoordinatore().matches('.*[Ii]nterregionale.*'); }
+    function eProvinciale()    { return ruoloCoordinatore().matches('.*[Pp]rovinciale.*'); }
+    function eRegionaleSemplice() {
+      return ruoloCoordinatore().matches('.*[Rr]egionale.*') && !eInterregionale();
     }
 
-    // Direttorio coordinatori: leggibile solo da altri coordinatori loggati.
-    // Nessuno può scriverci dal sito: si modifica solo dalla console Firebase.
+    function regioniNord() {
+      return ["Piemonte", "Valle d'Aosta", "Lombardia", "Trentino-Alto Adige",
+              "Veneto", "Friuli-Venezia Giulia", "Liguria", "Emilia-Romagna"];
+    }
+    function regioniCentro() {
+      return ["Toscana", "Umbria", "Marche", "Lazio"];
+    }
+    function regioniSud() {
+      return ["Abruzzo", "Molise", "Campania", "Puglia", "Basilicata",
+              "Calabria", "Sicilia", "Sardegna"];
+    }
+    function regioneNellaZonaInterregionale(regione, zona) {
+      return (zona == 'Nord'   && regione in regioniNord()) ||
+             (zona == 'Centro' && regione in regioniCentro()) ||
+             (zona == 'Sud'    && regione in regioniSud());
+    }
+function puoAgireSullaZona(dati) {
+      return isCoordinatore() && (
+        (eProvinciale()       && dati.provincia == zonaCoordinatore()) ||
+        (eRegionaleSemplice() && dati.regione   == zonaCoordinatore()) ||
+        (eInterregionale()    && (
+           regioneNellaZonaInterregionale(dati.regione, zonaCoordinatore()) ||
+           !('regione' in dati) || dati.regione == null
+        ))
+      );
+    }
+
     match /coordinatori/{uid} {
       allow read: if isCoordinatore();
       allow write: if false;
     }
-
-    // Segnalazioni (cittadine + verificate): un'unica collezione con un
-    // campo "stato" che ne segue il ciclo di vita:
-    //   in_attesa  → appena inviata da un cittadino, chiunque può crearla
-    //   verificata → confermata da un coordinatore Regionale/Provinciale
-    //   rifiutata  → scartata da un coordinatore Regionale/Provinciale
-    match /segnalazioni/{docId} {
-      // Lettura pubblica: la mappa la mostra a tutti, verificate o in attesa.
+match /segnalazioni/{docId} {
       allow read: if true;
 
-      // Chiunque (anche senza login) può creare una segnalazione, ma SOLO
-      // con stato "in_attesa", con coordinate numeriche e una descrizione
-      // non vuota: nessuno può auto-dichiararsi "verificato".
-      allow create: if request.resource.data.stato == 'in_attesa'
-                    && request.resource.data.lat is number
-                    && request.resource.data.lon is number
-                    && request.resource.data.descrizione is string
-                    && request.resource.data.descrizione.size() > 0;
+      allow create: if
+        (request.resource.data.stato == 'in_attesa'
+          && request.resource.data.lat is number
+          && request.resource.data.lon is number
+          && request.resource.data.descrizione is string
+          && request.resource.data.descrizione.size() > 0)
+        ||
+        (request.resource.data.stato == 'verificata'
+          && request.resource.data.verificato_da is string
+          && puoAgireSullaZona(request.resource.data));
 
-      // Solo un coordinatore Regionale o Provinciale può cambiare lo stato
-      // (verificare o rifiutare). Un Interregionale non può.
-      allow update: if puoVerificare();
+      allow update: if puoAgireSullaZona(resource.data);
 
       allow delete: if false;
     }
 
-    // Tutto il resto è vietato di default.
     match /{document=**} {
       allow read, write: if false;
     }
