@@ -229,11 +229,23 @@
         const btnRifiuta = document.createElement("button");
         btnRifiuta.textContent = "✕ Rifiuta";
         btnRifiuta.className = "btn-report";
-        btnRifiuta.style.cssText = "width:auto; padding:0.3rem 0.8rem; background:var(--accent-critico); color:#fff;";
+        btnRifiuta.style.cssText = "width:auto; padding:0.3rem 0.8rem; margin-right:0.5rem; background:var(--accent-critico); color:#fff;";
         btnRifiuta.addEventListener("click", () => aggiornaStatoSegnalazione(id, "rifiutata"));
 
         riga.appendChild(btnVerifica);
         riga.appendChild(btnRifiuta);
+
+        // Solo gli Interregionali possono correggere regione/provincia
+        // (es. se la geocodifica automatica ha sbagliato o non è riuscita).
+        if (/interregionale/i.test(profiloCorrente.ruolo || "")) {
+          const btnCorreggi = document.createElement("button");
+          btnCorreggi.textContent = "✎ Correggi zona";
+          btnCorreggi.className = "btn-report";
+          btnCorreggi.style.cssText = "width:auto; padding:0.3rem 0.8rem; background:var(--surface-2); color:var(--text); border:1px solid var(--border);";
+          btnCorreggi.addEventListener("click", () => correggiZonaSegnalazione(id, s));
+          riga.appendChild(btnCorreggi);
+        }
+
         contenitore.appendChild(riga);
       });
     } catch (errore) {
@@ -254,6 +266,31 @@
     } catch (errore) {
       console.error(errore);
       alert("Errore nell'aggiornamento della segnalazione.");
+    }
+  }
+
+  async function correggiZonaSegnalazione(idDocumento, datiAttuali){
+    const nuovaRegione = prompt(
+      "Nome ESATTO della regione (una delle 20 regioni italiane ufficiali, es. \"Toscana\"):",
+      datiAttuali.regione || ""
+    );
+    if (nuovaRegione === null) return; // annullato
+
+    const nuovaProvincia = prompt(
+      "Nome della provincia (facoltativo, lascia vuoto se non lo sai):",
+      datiAttuali.provincia || ""
+    );
+    if (nuovaProvincia === null) return; // annullato
+
+    try {
+      await updateDoc(doc(db, "segnalazioni", idDocumento), {
+        regione: nuovaRegione.trim() || null,
+        provincia: nuovaProvincia.trim() || null,
+      });
+      caricaCodaVerifica();
+    } catch (errore) {
+      console.error(errore);
+      alert("Errore nella correzione della zona. Ricorda: puoi correggere solo segnalazioni che rientrano già nella tua macro-area (o non classificate).");
     }
   }
 
