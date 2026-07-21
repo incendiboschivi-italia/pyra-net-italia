@@ -7,6 +7,7 @@ import {
   getFirestore, collection, getDocs, addDoc, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
+import { determinaZona } from "./geocodifica.js";
 
 let db = null;
 try {
@@ -156,6 +157,8 @@ function disegnaSegnalazioni(){
       `<b>Segnalazione cittadina — in attesa di verifica</b><br>` +
       `Coordinate: ${coord.dms}<br>` +
       `Coordinate (decimali): ${coord.decimali}` +
+      `${p.regione ? "<br>Regione: " + p.regione : ""}` +
+      `${p.provincia ? "<br>Provincia: " + p.provincia : ""}` +
       `${p.descrizione ? "<br>Descrizione: " + p.descrizione : ""}`
     );
     layerSegnalazioni.addLayer(marker);
@@ -179,6 +182,8 @@ function disegnaVerificati(){
       `<b>Incidente verificato da un coordinatore</b><br>` +
       `Coordinate: ${coord.dms}<br>` +
       `Coordinate (decimali): ${coord.decimali}` +
+      `${p.regione ? "<br>Regione: " + p.regione : ""}` +
+      `${p.provincia ? "<br>Provincia: " + p.provincia : ""}` +
       `${p.descrizione ? "<br>Descrizione: " + p.descrizione : ""}` +
       `${p.verificato_da ? "<br>Verificato da: " + p.verificato_da : ""}`
     );
@@ -332,10 +337,18 @@ document.getElementById("form-segnalazione-cittadino").addEventListener("submit"
     return;
   }
 
+  const bottoneInvia = e.target.querySelector('button[type="submit"]');
+  const testoOriginaleBottone = bottoneInvia.textContent;
+  bottoneInvia.textContent = "Determinazione della zona…";
+  bottoneInvia.disabled = true;
+
   try {
+    const { regione, provincia } = await determinaZona(lat, lon);
+
     await addDoc(collection(db, "segnalazioni"), {
       lat, lon, descrizione,
       stato: "in_attesa",
+      regione, provincia,
       creato_il: serverTimestamp(),
     });
     e.target.reset();
@@ -346,6 +359,9 @@ document.getElementById("form-segnalazione-cittadino").addEventListener("submit"
     console.error(errore);
     messaggio.textContent = "Errore nell'invio. Riprova.";
     messaggio.hidden = false;
+  } finally {
+    bottoneInvia.textContent = testoOriginaleBottone;
+    bottoneInvia.disabled = false;
   }
 });
 
