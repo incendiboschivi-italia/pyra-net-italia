@@ -1,5 +1,5 @@
 {
-  "aggiornato_il": "2026-07-21T14:26:55.695114+00:00",
+  "aggiornato_il": "2026-07-21T16:45:55.717576+00:00",
   "fonte": "NASA FIRMS (VIIRS/MODIS, NRT) — filtrato sui confini reali dell'Italia, esclusi i falsi positivi industriali noti",
   "rilevamenti": [
     {
@@ -1579,11 +1579,11 @@
       "sensore": "VIIRS"
     },
     {
-      "lat": 37.14,
-      "lon": 14.183,
+      "lat": 37.1399,
+      "lon": 14.1808,
       "data_ora": "2026-07-21T12:49:00+00:00",
-      "frp": 14.5,
-      "confidenza": "h",
+      "frp": 10.9,
+      "confidenza": "n",
       "sensore": "VIIRS"
     },
     {
@@ -1595,10 +1595,10 @@
       "sensore": "VIIRS"
     },
     {
-      "lat": 37.1405,
-      "lon": 14.1891,
+      "lat": 37.1403,
+      "lon": 14.1869,
       "data_ora": "2026-07-21T12:49:00+00:00",
-      "frp": 11.2,
+      "frp": 10.9,
       "confidenza": "n",
       "sensore": "VIIRS"
     },
@@ -1619,6 +1619,14 @@
       "sensore": "VIIRS"
     },
     {
+      "lat": 37.1484,
+      "lon": 14.1671,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 4.0,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
       "lat": 37.1486,
       "lon": 14.8627,
       "data_ora": "2026-07-21T12:49:00+00:00",
@@ -1631,6 +1639,1182 @@
       "lon": 14.7515,
       "data_ora": "2026-07-21T12:49:00+00:00",
       "frp": 7.8,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.1877,
+      "lon": 14.1791,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 10.0,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.1976,
+      "lon": 13.8303,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 6.2,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2048,
+      "lon": 14.2144,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 8.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2052,
+      "lon": 14.1576,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 4.5,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.209,
+      "lon": 14.2066,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 8.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2157,
+      "lon": 14.9576,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 18.8,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2166,
+      "lon": 14.971,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 16.0,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2197,
+      "lon": 14.9438,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 86.8,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2202,
+      "lon": 14.9504,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 86.8,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2221,
+      "lon": 14.9775,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 9.8,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2252,
+      "lon": 14.9502,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 86.8,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2256,
+      "lon": 14.9569,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 59.1,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2266,
+      "lon": 14.9701,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 9.8,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2389,
+      "lon": 13.7257,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 4.4,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2489,
+      "lon": 15.0021,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 1.3,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2494,
+      "lon": 15.0096,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 5.5,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.272,
+      "lon": 14.0242,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 10.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2725,
+      "lon": 14.0302,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 10.6,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2772,
+      "lon": 14.0299,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 5.4,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.3027,
+      "lon": 13.6096,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 3.2,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.3077,
+      "lon": 14.7635,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 7.7,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.3082,
+      "lon": 14.7705,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 9.2,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.3569,
+      "lon": 14.8257,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 5.2,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.366,
+      "lon": 13.4764,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 8.8,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.3812,
+      "lon": 13.3316,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 12.6,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.3817,
+      "lon": 13.3369,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 15.7,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.4015,
+      "lon": 13.6776,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 8.7,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.4051,
+      "lon": 13.6825,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 7.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.4102,
+      "lon": 13.6874,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 11.3,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.422,
+      "lon": 14.1644,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 7.2,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.4268,
+      "lon": 14.1636,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 7.2,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.4324,
+      "lon": 15.0427,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 7.0,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.4374,
+      "lon": 15.0422,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 5.2,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.4379,
+      "lon": 15.0493,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 6.9,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.5495,
+      "lon": 13.6999,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 12.4,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.567,
+      "lon": 14.953,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 13.2,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.5675,
+      "lon": 14.9599,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 13.2,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.5899,
+      "lon": 14.9217,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 7.6,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6009,
+      "lon": 14.9388,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 5.1,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6196,
+      "lon": 13.4236,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 4.5,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6281,
+      "lon": 13.4145,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 7.5,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6285,
+      "lon": 13.4198,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 7.5,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6304,
+      "lon": 13.0584,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 11.7,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.631,
+      "lon": 13.4502,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 11.3,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6359,
+      "lon": 13.8371,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 28.0,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6359,
+      "lon": 13.4544,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 51.2,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6374,
+      "lon": 13.4156,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 9.2,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6383,
+      "lon": 13.4265,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 12.8,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6393,
+      "lon": 13.4391,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 11.7,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.647,
+      "lon": 14.4688,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 16.5,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6772,
+      "lon": 13.6197,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 46.6,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6813,
+      "lon": 13.6118,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 46.6,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6816,
+      "lon": 14.7359,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 4.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6818,
+      "lon": 14.2315,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 6.8,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6824,
+      "lon": 13.6253,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 12.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6858,
+      "lon": 13.6103,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 14.0,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6864,
+      "lon": 13.6175,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 14.0,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6898,
+      "lon": 13.6016,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 22.1,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.695,
+      "lon": 13.6087,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 28.8,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6962,
+      "lon": 13.6227,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 7.9,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.705,
+      "lon": 14.0302,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 50.7,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.7056,
+      "lon": 14.0371,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 50.7,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.7098,
+      "lon": 14.0301,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 37.1,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.714,
+      "lon": 14.0229,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 9.1,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.7151,
+      "lon": 14.0364,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 37.1,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.7188,
+      "lon": 14.0222,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 13.5,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.7193,
+      "lon": 14.0291,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 49.3,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.7277,
+      "lon": 14.014,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 13.1,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.7282,
+      "lon": 14.0209,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 13.1,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.7287,
+      "lon": 14.0278,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 37.8,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.7367,
+      "lon": 14.0073,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 10.1,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.7377,
+      "lon": 14.0202,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 21.0,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.7382,
+      "lon": 14.0265,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 56.5,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.8318,
+      "lon": 12.8306,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 8.1,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.8593,
+      "lon": 13.0962,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 8.9,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.8933,
+      "lon": 12.6798,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 10.5,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.8963,
+      "lon": 12.6638,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 16.8,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.8968,
+      "lon": 12.6689,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 16.8,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 38.123,
+      "lon": 15.2355,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 2.3,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 38.1497,
+      "lon": 15.485,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 6.5,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 38.1642,
+      "lon": 16.1471,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 1.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 38.295,
+      "lon": 15.9496,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 5.3,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 38.3466,
+      "lon": 15.863,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 7.8,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 38.3604,
+      "lon": 15.9169,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 1.3,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 38.509,
+      "lon": 16.0172,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 3.7,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 38.5722,
+      "lon": 16.0408,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 3.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 38.5775,
+      "lon": 16.04,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 3.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 38.6224,
+      "lon": 16.0714,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 6.8,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 38.6226,
+      "lon": 16.0758,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 10.5,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 38.6253,
+      "lon": 16.0717,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 13.8,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 38.6255,
+      "lon": 16.076,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 8.7,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 38.6362,
+      "lon": 16.2141,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 4.6,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 38.6549,
+      "lon": 15.9284,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 3.7,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 38.6551,
+      "lon": 15.932,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 3.7,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 39.4059,
+      "lon": 8.8507,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 7.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 39.4065,
+      "lon": 8.8563,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 7.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 39.4089,
+      "lon": 8.8444,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 7.7,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 39.5054,
+      "lon": 16.4699,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 10.1,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 39.5058,
+      "lon": 16.4784,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 25.0,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 39.531,
+      "lon": 16.0146,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 4.4,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 39.7276,
+      "lon": 16.1796,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 3.5,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 39.7851,
+      "lon": 16.3346,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 12.7,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 39.8299,
+      "lon": 16.2455,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 5.3,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 39.847,
+      "lon": 16.2572,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 5.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 39.8522,
+      "lon": 16.2512,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 9.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 39.8531,
+      "lon": 16.2684,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 4.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 39.8556,
+      "lon": 16.2111,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 6.6,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 39.8558,
+      "lon": 16.2154,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 6.6,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 39.8584,
+      "lon": 16.2658,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 4.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 39.8632,
+      "lon": 16.2519,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 8.8,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 39.8733,
+      "lon": 16.2357,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 9.4,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 40.0405,
+      "lon": 18.1912,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 8.0,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 40.0407,
+      "lon": 18.1971,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 8.0,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 40.8978,
+      "lon": 16.5956,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 5.1,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 40.9041,
+      "lon": 16.6099,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 15.6,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 40.9097,
+      "lon": 16.6098,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 15.6,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 40.9102,
+      "lon": 16.62,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 51.4,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 40.9143,
+      "lon": 16.5849,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 4.7,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 40.9154,
+      "lon": 16.6099,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 7.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 40.9158,
+      "lon": 16.6199,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 24.5,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 40.9199,
+      "lon": 16.5848,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 4.7,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 40.9203,
+      "lon": 16.595,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 8.4,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 40.9378,
+      "lon": 16.1461,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 2.3,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 40.9431,
+      "lon": 16.1442,
+      "data_ora": "2026-07-21T12:49:00+00:00",
+      "frp": 3.1,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 41.0356,
+      "lon": 13.9563,
+      "data_ora": "2026-07-21T12:51:00+00:00",
+      "frp": 4.2,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 41.1123,
+      "lon": 15.6899,
+      "data_ora": "2026-07-21T12:51:00+00:00",
+      "frp": 3.4,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 41.1127,
+      "lon": 15.6983,
+      "data_ora": "2026-07-21T12:51:00+00:00",
+      "frp": 7.0,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 41.1178,
+      "lon": 15.6931,
+      "data_ora": "2026-07-21T12:51:00+00:00",
+      "frp": 3.4,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 41.118,
+      "lon": 15.6974,
+      "data_ora": "2026-07-21T12:51:00+00:00",
+      "frp": 7.0,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 41.1702,
+      "lon": 15.5105,
+      "data_ora": "2026-07-21T12:51:00+00:00",
+      "frp": 1.8,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 41.7338,
+      "lon": 15.3836,
+      "data_ora": "2026-07-21T12:51:00+00:00",
+      "frp": 1.9,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 41.7353,
+      "lon": 15.3805,
+      "data_ora": "2026-07-21T12:51:00+00:00",
+      "frp": 2.2,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 41.7962,
+      "lon": 12.4586,
+      "data_ora": "2026-07-21T12:51:00+00:00",
+      "frp": 4.0,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 41.811,
+      "lon": 15.75,
+      "data_ora": "2026-07-21T12:51:00+00:00",
+      "frp": 12.2,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 41.8115,
+      "lon": 15.7601,
+      "data_ora": "2026-07-21T12:51:00+00:00",
+      "frp": 7.6,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 41.8691,
+      "lon": 14.8651,
+      "data_ora": "2026-07-21T12:51:00+00:00",
+      "frp": 3.4,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 41.8743,
+      "lon": 14.8644,
+      "data_ora": "2026-07-21T12:51:00+00:00",
+      "frp": 5.0,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 41.9034,
+      "lon": 12.6046,
+      "data_ora": "2026-07-21T12:51:00+00:00",
+      "frp": 4.4,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 42.1935,
+      "lon": 13.5324,
+      "data_ora": "2026-07-21T12:51:00+00:00",
+      "frp": 5.4,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 42.1939,
+      "lon": 13.5388,
+      "data_ora": "2026-07-21T12:51:00+00:00",
+      "frp": 5.4,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 42.2272,
+      "lon": 12.6283,
+      "data_ora": "2026-07-21T12:51:00+00:00",
+      "frp": 3.5,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 42.9853,
+      "lon": 13.1892,
+      "data_ora": "2026-07-21T12:51:00+00:00",
+      "frp": 6.8,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 42.986,
+      "lon": 13.1995,
+      "data_ora": "2026-07-21T12:51:00+00:00",
+      "frp": 6.8,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 45.0836,
+      "lon": 9.3581,
+      "data_ora": "2026-07-21T12:51:00+00:00",
+      "frp": 4.7,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 45.1455,
+      "lon": 9.9414,
+      "data_ora": "2026-07-21T12:51:00+00:00",
+      "frp": 4.5,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 45.4616,
+      "lon": 10.4579,
+      "data_ora": "2026-07-21T12:51:00+00:00",
+      "frp": 5.2,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 45.7126,
+      "lon": 11.3945,
+      "data_ora": "2026-07-21T12:51:00+00:00",
+      "frp": 2.2,
       "confidenza": "n",
       "sensore": "VIIRS"
     },
@@ -3955,6 +5139,966 @@
       "sensore": "VIIRS"
     },
     {
+      "lat": 37.0486,
+      "lon": 14.4385,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 6.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.0622,
+      "lon": 14.4441,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 10.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.0652,
+      "lon": 14.4449,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 32.6,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.0653,
+      "lon": 14.4529,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 39.1,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.0936,
+      "lon": 14.9072,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 15.4,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.0938,
+      "lon": 14.916,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 13.0,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.0945,
+      "lon": 14.9257,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 14.8,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.1007,
+      "lon": 14.9152,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 13.0,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.1362,
+      "lon": 14.6143,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 9.0,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.1392,
+      "lon": 14.183,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 25.9,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.1453,
+      "lon": 14.1622,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 7.5,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.1455,
+      "lon": 14.1688,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 7.5,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.1459,
+      "lon": 14.1819,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 25.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.146,
+      "lon": 14.1888,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 71.8,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.1486,
+      "lon": 13.8156,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 9.3,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2048,
+      "lon": 14.1541,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 3.1,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.212,
+      "lon": 14.9458,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 9.6,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2122,
+      "lon": 14.9608,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 11.0,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2123,
+      "lon": 14.968,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 11.3,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2143,
+      "lon": 14.378,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 20.1,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.218,
+      "lon": 14.3789,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 15.8,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2187,
+      "lon": 14.9399,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 14.7,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2188,
+      "lon": 14.9469,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 22.5,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2191,
+      "lon": 14.9606,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 23.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2192,
+      "lon": 14.968,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 7.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2194,
+      "lon": 14.9756,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 7.9,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2254,
+      "lon": 14.9335,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 47.1,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2256,
+      "lon": 14.9406,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 47.1,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2257,
+      "lon": 14.9474,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 56.1,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.226,
+      "lon": 14.9609,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 23.9,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2261,
+      "lon": 14.968,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 7.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2385,
+      "lon": 14.0147,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 3.5,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2408,
+      "lon": 14.1019,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 3.9,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2432,
+      "lon": 13.7252,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 3.3,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2544,
+      "lon": 15.0068,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 6.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.2769,
+      "lon": 14.0286,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 3.5,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.3113,
+      "lon": 14.768,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 10.6,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.3123,
+      "lon": 14.7615,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 10.8,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.3544,
+      "lon": 14.8167,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 17.9,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.3613,
+      "lon": 14.817,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 31.1,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.3796,
+      "lon": 13.3359,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 26.8,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.4045,
+      "lon": 13.6825,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 5.6,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.4046,
+      "lon": 13.6874,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 2.7,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.4109,
+      "lon": 13.6816,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 15.9,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.4111,
+      "lon": 13.6878,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 10.1,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.4235,
+      "lon": 14.166,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 5.9,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.4342,
+      "lon": 15.0412,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 9.3,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.4344,
+      "lon": 15.0492,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 10.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.4655,
+      "lon": 13.2953,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 4.0,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.5249,
+      "lon": 14.7538,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 3.1,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.548,
+      "lon": 13.7005,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 16.2,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.5641,
+      "lon": 14.9603,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 4.5,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.5708,
+      "lon": 14.9509,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 7.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.5908,
+      "lon": 14.9181,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 4.0,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6241,
+      "lon": 13.4154,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 11.4,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6306,
+      "lon": 13.4175,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 7.3,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.636,
+      "lon": 13.8353,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 18.2,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.637,
+      "lon": 13.4183,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 5.2,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6375,
+      "lon": 13.4317,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 5.8,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6377,
+      "lon": 13.4398,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 14.0,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.638,
+      "lon": 13.4491,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 14.0,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6444,
+      "lon": 14.4713,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 6.2,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6511,
+      "lon": 14.4699,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 4.8,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6753,
+      "lon": 13.6158,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 5.7,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6769,
+      "lon": 14.7308,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 3.6,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.677,
+      "lon": 14.7384,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 2.8,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6817,
+      "lon": 13.6136,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 19.4,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6877,
+      "lon": 13.5996,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 19.4,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6881,
+      "lon": 13.6114,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 19.4,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6884,
+      "lon": 13.6211,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 13.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6951,
+      "lon": 13.6109,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 4.6,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6954,
+      "lon": 13.6204,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 4.6,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.6988,
+      "lon": 14.0349,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 10.0,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.699,
+      "lon": 14.0427,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 8.7,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.7052,
+      "lon": 14.0265,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 78.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.7056,
+      "lon": 14.0428,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 62.8,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.7058,
+      "lon": 14.0499,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 62.8,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.7184,
+      "lon": 14.0272,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 39.4,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.7186,
+      "lon": 14.0352,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 39.4,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.7249,
+      "lon": 14.0182,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 18.4,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.7251,
+      "lon": 14.0268,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 39.4,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.7265,
+      "lon": 14.0176,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 21.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.7313,
+      "lon": 14.0104,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 11.3,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.7379,
+      "lon": 14.0117,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 11.3,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.7381,
+      "lon": 14.019,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 11.3,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.7383,
+      "lon": 14.0262,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 16.2,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.8265,
+      "lon": 12.8389,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 6.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.8322,
+      "lon": 12.8247,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 10.3,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.8325,
+      "lon": 12.8315,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 10.3,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.8905,
+      "lon": 13.6385,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 7.8,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.8944,
+      "lon": 12.6823,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 6.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 37.8947,
+      "lon": 12.6883,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 6.9,
+      "confidenza": "l",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 38.149,
+      "lon": 15.489,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 10.2,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 38.3412,
+      "lon": 15.8623,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 4.6,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 38.3432,
+      "lon": 15.8664,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 6.1,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 39.3533,
+      "lon": 9.1001,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 5.4,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 39.3585,
+      "lon": 9.0993,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 3.2,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 39.4068,
+      "lon": 8.8408,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 31.8,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 39.4073,
+      "lon": 8.8486,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 34.0,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 39.4165,
+      "lon": 8.832,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 16.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 39.4168,
+      "lon": 8.8359,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 20.3,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 41.0303,
+      "lon": 15.1669,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 3.6,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 41.1132,
+      "lon": 15.6922,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 4.7,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 41.1132,
+      "lon": 15.701,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 4.7,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 41.1688,
+      "lon": 14.372,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 6.7,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 41.3648,
+      "lon": 15.3344,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 3.2,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 41.3688,
+      "lon": 15.3336,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 4.5,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 41.7659,
+      "lon": 13.0098,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 3.8,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 41.8111,
+      "lon": 15.7595,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 12.4,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 41.8999,
+      "lon": 12.6024,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 2.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 42.1952,
+      "lon": 13.5404,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 6.1,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 42.2278,
+      "lon": 12.627,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 2.6,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 42.9875,
+      "lon": 13.1905,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 27.2,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 42.9885,
+      "lon": 13.2084,
+      "data_ora": "2026-07-21T13:08:00+00:00",
+      "frp": 13.9,
+      "confidenza": "h",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 45.0803,
+      "lon": 9.352,
+      "data_ora": "2026-07-21T13:10:00+00:00",
+      "frp": 3.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 45.0805,
+      "lon": 9.3571,
+      "data_ora": "2026-07-21T13:10:00+00:00",
+      "frp": 3.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 45.309,
+      "lon": 10.9435,
+      "data_ora": "2026-07-21T13:10:00+00:00",
+      "frp": 3.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 45.5054,
+      "lon": 9.3583,
+      "data_ora": "2026-07-21T13:10:00+00:00",
+      "frp": 1.9,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 45.7118,
+      "lon": 11.389,
+      "data_ora": "2026-07-21T13:10:00+00:00",
+      "frp": 3.1,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 45.712,
+      "lon": 11.3956,
+      "data_ora": "2026-07-21T13:10:00+00:00",
+      "frp": 3.2,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
       "lat": 39.5348,
       "lon": 16.0105,
       "data_ora": "2026-07-21T03:32:00+00:00",
@@ -4208,6 +6352,262 @@
       "data_ora": "2026-07-21T08:11:00+00:00",
       "frp": 9.5,
       "confidenza": "70",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.1385,
+      "lon": 14.6092,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 24.2,
+      "confidenza": "81",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.1534,
+      "lon": 14.1648,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 31.5,
+      "confidenza": "85",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.2137,
+      "lon": 14.9513,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 68.7,
+      "confidenza": "90",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.2155,
+      "lon": 14.9722,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 61.6,
+      "confidenza": "89",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.2257,
+      "lon": 14.9501,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 672.5,
+      "confidenza": "100",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.2275,
+      "lon": 14.9706,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 283.3,
+      "confidenza": "100",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.2377,
+      "lon": 14.9493,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 124.8,
+      "confidenza": "95",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.6277,
+      "lon": 13.4194,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 61.0,
+      "confidenza": "86",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.6349,
+      "lon": 13.8385,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 29.6,
+      "confidenza": "75",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.64,
+      "lon": 13.4319,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 97.7,
+      "confidenza": "94",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.6486,
+      "lon": 14.4752,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 71.7,
+      "confidenza": "86",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.6886,
+      "lon": 14.0434,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 100.5,
+      "confidenza": "94",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.6892,
+      "lon": 13.5886,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 29.5,
+      "confidenza": "72",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.6904,
+      "lon": 14.0627,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 117.1,
+      "confidenza": "96",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.6911,
+      "lon": 13.6075,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 21.1,
+      "confidenza": "55",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.6998,
+      "lon": 14.0412,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 124.0,
+      "confidenza": "97",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.7017,
+      "lon": 14.0606,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 105.9,
+      "confidenza": "95",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.7112,
+      "lon": 14.0397,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 96.3,
+      "confidenza": "94",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.7225,
+      "lon": 14.0379,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 64.7,
+      "confidenza": "77",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.7319,
+      "lon": 14.0164,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 26.8,
+      "confidenza": "43",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.7338,
+      "lon": 14.0357,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 22.4,
+      "confidenza": "16",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.8566,
+      "lon": 13.089,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 15.9,
+      "confidenza": "72",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.8772,
+      "lon": 13.6366,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 72.9,
+      "confidenza": "91",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 37.8788,
+      "lon": 13.6541,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 24.2,
+      "confidenza": "50",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 39.4049,
+      "lon": 8.8388,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 25.1,
+      "confidenza": "83",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 39.4122,
+      "lon": 8.825,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 31.7,
+      "confidenza": "87",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 39.4138,
+      "lon": 8.8368,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 26.0,
+      "confidenza": "84",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 39.421,
+      "lon": 8.823,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 93.0,
+      "confidenza": "100",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 39.4226,
+      "lon": 8.8347,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 44.5,
+      "confidenza": "92",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 40.9097,
+      "lon": 16.6143,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 42.6,
+      "confidenza": "72",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 40.9158,
+      "lon": 16.6058,
+      "data_ora": "2026-07-21T14:35:00+00:00",
+      "frp": 40.6,
+      "confidenza": "72",
+      "sensore": "MODIS"
+    },
+    {
+      "lat": 41.8844,
+      "lon": 12.3882,
+      "data_ora": "2026-07-21T14:37:00+00:00",
+      "frp": 15.3,
+      "confidenza": "71",
       "sensore": "MODIS"
     }
   ]
