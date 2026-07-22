@@ -10,6 +10,6 @@
 // (vedi README, sezione 5, per i passaggi).
 
 export const cloudinaryConfig = {
-  cloudName: "INSERISCI_QUI_IL_TUO_CLOUD_NAME",
-  uploadPreset: "INSERISCI_QUI_IL_TUO_UPLOAD_PRESET",
+  cloudName: "vgcpafz8",
+  uploadPreset: "pyranet_segnalazioni",
 };
