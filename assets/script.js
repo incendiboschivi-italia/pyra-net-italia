@@ -52,9 +52,21 @@ L.control.layers(
   { position: "topright", collapsed: false }
 ).addTo(map);
 
-const layerFuoco = L.layerGroup().addTo(map);
-const layerSegnalazioni = L.layerGroup().addTo(map); // in attesa di verifica
-const layerVerificati = L.layerGroup().addTo(map);   // verificate da un coordinatore
+const layerFuoco = L.markerClusterGroup({
+  disableClusteringAtZoom: 12,
+  spiderfyOnMaxZoom: true,
+  maxClusterRadius: 45,
+}).addTo(map);
+const layerSegnalazioni = L.markerClusterGroup({
+  disableClusteringAtZoom: 12,
+  spiderfyOnMaxZoom: true,
+  maxClusterRadius: 45,
+}).addTo(map); // in attesa di verifica
+const layerVerificati = L.markerClusterGroup({
+  disableClusteringAtZoom: 12,
+  spiderfyOnMaxZoom: true,
+  maxClusterRadius: 45,
+}).addTo(map);   // verificate da un coordinatore
 
 let datiFuoco = [];
 let datiSegnalazioni = [];
@@ -99,6 +111,19 @@ function raggioIntensita(frp){
   return Math.min(18, 6 + frp / 8);
 }
 
+// Icona "a pallino" colorato: sembra identica ai vecchi cerchi, ma essendo
+// un vero marker può essere raggruppata (clustering) quando ce ne sono
+// tanti vicini, invece di sovrapporsi in modo confuso.
+function iconaPallino(colore, diametro, tratteggiato){
+  const bordo = tratteggiato ? `2px dashed ${colore}` : `1.5px solid ${colore}`;
+  return L.divIcon({
+    className: "pallino-marker",
+    html: `<div style="width:${diametro}px;height:${diametro}px;border-radius:50%;background:${colore};opacity:0.7;border:${bordo};"></div>`,
+    iconSize: [diametro, diametro],
+    iconAnchor: [diametro / 2, diametro / 2],
+  });
+}
+
 function dataMillis(valore){
   // Le date dei rilevamenti satellitari sono stringhe ISO; quelle delle
   // segnalazioni Firestore sono Timestamp con .toDate(), oppure null se il
@@ -120,13 +145,8 @@ function disegnaFuoco(){
   const visibili = datiFuoco.filter(p => entroIntervallo(p.data_ora, oreSelezionate));
   visibili.forEach(p => {
     const coord = coordinateComplete(p.lat, p.lon);
-    const marker = L.circleMarker([p.lat, p.lon], {
-      radius: raggioIntensita(p.frp),
-      color: coloreIntensita(p.frp),
-      fillColor: coloreIntensita(p.frp),
-      fillOpacity: 0.55,
-      weight: 1.5,
-    }).bindPopup(
+    const diametro = raggioIntensita(p.frp) * 2;
+    const marker = L.marker([p.lat, p.lon], { icon: iconaPallino(coloreIntensita(p.frp), diametro) }).bindPopup(
       `<b>Rilevamento satellitare</b><br>` +
       `Data e ora: ${formatOra(p.data_ora)}<br>` +
       `Coordinate: ${coord.dms}<br>` +
@@ -146,14 +166,7 @@ function disegnaSegnalazioni(){
   const visibili = datiSegnalazioni.filter(p => entroIntervallo(p.creato_il, oreSelezionate));
   visibili.forEach(p => {
     const coord = coordinateComplete(p.lat, p.lon);
-    const marker = L.circleMarker([p.lat, p.lon], {
-      radius: 7,
-      color: "#3E8E8E",
-      fillColor: "#3E8E8E",
-      fillOpacity: 0.5,
-      weight: 1.5,
-      dashArray: "2,2",
-    }).bindPopup(
+    const marker = L.marker([p.lat, p.lon], { icon: iconaPallino("#3E8E8E", 14, true) }).bindPopup(
       `<b>Segnalazione cittadina — in attesa di verifica</b><br>` +
       `Coordinate: ${coord.dms}<br>` +
       `Coordinate (decimali): ${coord.decimali}` +
@@ -172,13 +185,7 @@ function disegnaVerificati(){
   const visibili = datiVerificati.filter(p => entroIntervallo(p.creato_il, oreSelezionate));
   visibili.forEach(p => {
     const coord = coordinateComplete(p.lat, p.lon);
-    const marker = L.circleMarker([p.lat, p.lon], {
-      radius: 8,
-      color: "#4CAF50",
-      fillColor: "#4CAF50",
-      fillOpacity: 0.6,
-      weight: 2,
-    }).bindPopup(
+    const marker = L.marker([p.lat, p.lon], { icon: iconaPallino("#4CAF50", 16, false) }).bindPopup(
       `<b>Incidente verificato da un coordinatore</b><br>` +
       `Coordinate: ${coord.dms}<br>` +
       `Coordinate (decimali): ${coord.decimali}` +
