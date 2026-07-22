@@ -173,11 +173,16 @@ def main():
             ):
                 gruppi[cella] = r
 
-    unici = list(gruppi.values())
+    unici_tutti = list(gruppi.values())
+
+    # Mostra solo i rilevamenti con intensità (FRP) di almeno 50 MW: scarta
+    # i focolai deboli, tiene solo quelli seri/confermati.
+    SOGLIA_FRP_MINIMA = 50
+    unici = [r for r in unici_tutti if r["frp"] is not None and r["frp"] >= SOGLIA_FRP_MINIMA]
 
     output = {
         "aggiornato_il": datetime.now(timezone.utc).isoformat(),
-        "fonte": "NASA FIRMS (VIIRS/MODIS, NRT) — filtrato sui confini reali dell'Italia, esclusi i falsi positivi industriali noti, raggruppato per posizione",
+        "fonte": f"NASA FIRMS (VIIRS/MODIS, NRT) — filtrato sui confini reali dell'Italia, esclusi i falsi positivi industriali noti, raggruppato per posizione, solo FRP >= {SOGLIA_FRP_MINIMA} MW",
         "rilevamenti": unici,
     }
 
@@ -186,7 +191,7 @@ def main():
         json.dump(output, f, ensure_ascii=False, indent=2)
 
     print(f"Trovati {len(tutti)} rilevamenti totali nell'area, {len(dentro_italia)} dentro l'Italia, "
-          f"raggruppati in {len(unici)} punti distinti "
+          f"raggruppati in {len(unici_tutti)} punti distinti, {len(unici)} con FRP >= {SOGLIA_FRP_MINIMA} MW "
           f"({esclusi_industriali} esclusi come falsi positivi industriali).")
 
 
