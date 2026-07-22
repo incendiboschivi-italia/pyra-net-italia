@@ -68,6 +68,10 @@
           <span>Descrizione</span>
           <textarea id="incidente-descrizione" rows="3" placeholder="Cosa sta succedendo, punti di riferimento, ecc."></textarea>
         </label>
+        <label>
+          <span>Foto dell'incendio/avvistamento (obbligatoria)</span>
+          <input type="file" id="incidente-foto" accept="image/*" capture="environment" required>
+        </label>
         <button type="submit" class="btn-report" style="width:auto;">Pubblica sulla mappa</button>
       </form>
       <p id="messaggio-incidente" class="messaggio-errore" hidden></p>
@@ -89,6 +93,7 @@
 <script type="module">
   import { auth, esci, osservaStatoAccesso, leggiProfiloCoordinatore, db } from "./assets/auth.js";
   import { determinaZona, areaInterregionaleDellaRegione, REGIONI_PER_AREA } from "./assets/geocodifica.js";
+  import { caricaFoto } from "./assets/foto.js";
   import {
     collection, getDocs, addDoc, updateDoc, doc, query, where, orderBy, limit, serverTimestamp
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -220,6 +225,19 @@
         testo.textContent = `${s.lat}, ${s.lon} (${zonaTesto}) — ${s.descrizione || "(nessuna descrizione)"}`;
         riga.appendChild(testo);
 
+        if (s.foto_url) {
+          const link = document.createElement("a");
+          link.href = s.foto_url;
+          link.target = "_blank";
+          link.rel = "noopener";
+          const miniatura = document.createElement("img");
+          miniatura.src = s.foto_url;
+          miniatura.alt = "Foto della segnalazione";
+          miniatura.style.cssText = "max-width:160px; max-height:120px; border-radius:4px; display:block; margin-bottom:0.5rem;";
+          link.appendChild(miniatura);
+          riga.appendChild(link);
+        }
+
         const btnVerifica = document.createElement("button");
         btnVerifica.textContent = "✓ Verifica";
         btnVerifica.className = "btn-report";
@@ -304,19 +322,30 @@
     const lat = parseFloat(document.getElementById("incidente-lat").value);
     const lon = parseFloat(document.getElementById("incidente-lon").value);
     const descrizione = document.getElementById("incidente-descrizione").value.trim();
+    const fileFoto = document.getElementById("incidente-foto").files[0];
+
+    if (!fileFoto) {
+      messaggio.textContent = "Devi allegare una foto dell'incendio o dell'avvistamento.";
+      messaggio.hidden = false;
+      return;
+    }
 
     const bottone = e.target.querySelector('button[type="submit"]');
     const testoOriginale = bottone.textContent;
-    bottone.textContent = "Determinazione della zona…";
     bottone.disabled = true;
 
     try {
+      bottone.textContent = "Caricamento della foto…";
+      const fotoUrl = await caricaFoto(fileFoto);
+
+      bottone.textContent = "Determinazione della zona…";
       const { regione, provincia } = await determinaZona(lat, lon);
 
       await addDoc(collection(db, "segnalazioni"), {
         lat, lon, descrizione,
         stato: "verificata",
         regione, provincia,
+        foto_url: fotoUrl,
         verificato_da: profiloCorrente?.nome || auth.currentUser.email,
         verificato_il: serverTimestamp(),
         creato_il: serverTimestamp(),
@@ -345,8 +374,26 @@
       contenitore.innerHTML = "";
       istantanea.forEach(documento => {
         const i = documento.data();
-        const riga = document.createElement("p");
-        riga.textContent = `${i.lat}, ${i.lon} — ${i.descrizione || "(nessuna descrizione)"} — verificato da ${i.verificato_da || "n/d"}`;
+        const riga = document.createElement("div");
+        riga.style.cssText = "border-bottom:1px solid var(--border); padding:0.5rem 0;";
+
+        const testo = document.createElement("p");
+        testo.textContent = `${i.lat}, ${i.lon} — ${i.descrizione || "(nessuna descrizione)"} — verificato da ${i.verificato_da || "n/d"}`;
+        riga.appendChild(testo);
+
+        if (i.foto_url) {
+          const link = document.createElement("a");
+          link.href = i.foto_url;
+          link.target = "_blank";
+          link.rel = "noopener";
+          const miniatura = document.createElement("img");
+          miniatura.src = i.foto_url;
+          miniatura.alt = "Foto dell'incendio verificato";
+          miniatura.style.cssText = "max-width:160px; max-height:120px; border-radius:4px; display:block; margin-top:0.3rem;";
+          link.appendChild(miniatura);
+          riga.appendChild(link);
+        }
+
         contenitore.appendChild(riga);
       });
     } catch (errore) {
