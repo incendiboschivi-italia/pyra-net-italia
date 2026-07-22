@@ -273,6 +273,24 @@ a{ color: var(--accent-fuoco); }
 
 /* ---------- Leaflet overrides ---------- */
 
+/* Leaflet mette uno sfondo bianco di default alle icone personalizzate:
+   lo togliamo, il nostro pallino colorato è già disegnato dentro. */
+.leaflet-div-icon{
+  background: transparent;
+  border: none;
+}
+
+/* Bolle di raggruppamento (cluster) in stile coerente col resto del sito */
+.marker-cluster-small, .marker-cluster-medium, .marker-cluster-large{
+  background-color: rgba(232, 90, 43, 0.35);
+}
+.marker-cluster-small div, .marker-cluster-medium div, .marker-cluster-large div{
+  background-color: rgba(232, 90, 43, 0.75);
+  color: #0A0D0C;
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
 .leaflet-popup-content-wrapper{
   background: var(--surface);
   color: var(--text);
