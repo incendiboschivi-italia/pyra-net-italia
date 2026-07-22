@@ -151,18 +151,33 @@ def main():
     ]
     esclusi_industriali = prima_del_filtro - len(dentro_italia)
 
-    # rimuove duplicati (stesso punto/ora arrotondato) tra sensori diversi
-    visti = set()
-    unici = []
+    # Raggruppa per POSIZIONE (griglia di circa 1 km), non più per orario esatto:
+    # lo stesso incendio, se rilevato più volte da satelliti/passaggi diversi,
+    # va contato una volta sola. Di ogni gruppo si tiene il rilevamento più
+    # intenso (FRP più alto) e più recente, così il numero mostrato sul sito
+    # rappresenta punti fisici distinti, non singoli passaggi satellitari.
+    gruppi = {}
     for r in dentro_italia:
-        chiave = (round(r["lat"], 2), round(r["lon"], 2), r["data_ora"])
-        if chiave not in visti:
-            visti.add(chiave)
-            unici.append(r)
+        # ~0.01° equivale a circa 0.7-1.1 km alle latitudini italiane: punti
+        # entro questa distanza vengono considerati lo stesso incendio.
+        cella = (round(r["lat"], 2), round(r["lon"], 2))
+        attuale = gruppi.get(cella)
+        if attuale is None:
+            gruppi[cella] = r
+        else:
+            frp_nuovo = r["frp"] if r["frp"] is not None else -1
+            frp_attuale = attuale["frp"] if attuale["frp"] is not None else -1
+            # tiene il rilevamento con FRP più alto; a parità, il più recente
+            if frp_nuovo > frp_attuale or (
+                frp_nuovo == frp_attuale and (r["data_ora"] or "") > (attuale["data_ora"] or "")
+            ):
+                gruppi[cella] = r
+
+    unici = list(gruppi.values())
 
     output = {
         "aggiornato_il": datetime.now(timezone.utc).isoformat(),
-        "fonte": "NASA FIRMS (VIIRS/MODIS, NRT) — filtrato sui confini reali dell'Italia, esclusi i falsi positivi industriali noti",
+        "fonte": "NASA FIRMS (VIIRS/MODIS, NRT) — filtrato sui confini reali dell'Italia, esclusi i falsi positivi industriali noti, raggruppato per posizione",
         "rilevamenti": unici,
     }
 
@@ -170,7 +185,8 @@ def main():
     with open("data/incendi-attivi.json", "w", encoding="utf-8") as f:
         json.dump(output, f, ensure_ascii=False, indent=2)
 
-    print(f"Trovati {len(tutti)} rilevamenti totali nell'area, {len(unici)} dentro l'Italia "
+    print(f"Trovati {len(tutti)} rilevamenti totali nell'area, {len(dentro_italia)} dentro l'Italia, "
+          f"raggruppati in {len(unici)} punti distinti "
           f"({esclusi_industriali} esclusi come falsi positivi industriali).")
 
 
