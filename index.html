@@ -117,6 +117,10 @@
         <span>Descrizione</span>
         <textarea id="segnalazione-descrizione" rows="3" required placeholder="Cosa vedi, punti di riferimento, ecc."></textarea>
       </label>
+      <label>
+        <span>Foto dell'incendio/avvistamento (obbligatoria)</span>
+        <input type="file" id="segnalazione-foto" accept="image/*" capture="environment" required>
+      </label>
       <button type="submit" class="btn-report" style="width:auto;">Invia la segnalazione</button>
     </form>
     <p id="messaggio-segnalazione-cittadino" class="messaggio-errore" hidden></p>
