@@ -8,10 +8,12 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
 import { determinaZona } from "./geocodifica.js";
+import { caricaFoto } from "./foto.js";
 
 let db = null;
+let appFirebase = null;
 try {
-  const appFirebase = initializeApp(firebaseConfig);
+  appFirebase = initializeApp(firebaseConfig);
   db = getFirestore(appFirebase);
 } catch (errore) {
   console.warn("Firebase non configurato: le segnalazioni resteranno vuote finché non viene impostato assets/firebase-config.js", errore);
@@ -172,7 +174,8 @@ function disegnaSegnalazioni(){
       `Coordinate (decimali): ${coord.decimali}` +
       `${p.regione ? "<br>Regione: " + p.regione : ""}` +
       `${p.provincia ? "<br>Provincia: " + p.provincia : ""}` +
-      `${p.descrizione ? "<br>Descrizione: " + p.descrizione : ""}`
+      `${p.descrizione ? "<br>Descrizione: " + p.descrizione : ""}` +
+      `${p.foto_url ? `<br><a href="${p.foto_url}" target="_blank" rel="noopener"><img src="${p.foto_url}" alt="Foto della segnalazione" style="max-width:200px; max-height:150px; border-radius:4px; margin-top:0.4rem; display:block;"></a>` : ""}`
     );
     layerSegnalazioni.addLayer(marker);
   });
@@ -192,7 +195,8 @@ function disegnaVerificati(){
       `${p.regione ? "<br>Regione: " + p.regione : ""}` +
       `${p.provincia ? "<br>Provincia: " + p.provincia : ""}` +
       `${p.descrizione ? "<br>Descrizione: " + p.descrizione : ""}` +
-      `${p.verificato_da ? "<br>Verificato da: " + p.verificato_da : ""}`
+      `${p.verificato_da ? "<br>Verificato da: " + p.verificato_da : ""}` +
+      `${p.foto_url ? `<br><a href="${p.foto_url}" target="_blank" rel="noopener"><img src="${p.foto_url}" alt="Foto dell'incidente" style="max-width:200px; max-height:150px; border-radius:4px; margin-top:0.4rem; display:block;"></a>` : ""}`
     );
     layerVerificati.addLayer(marker);
   });
@@ -337,6 +341,13 @@ document.getElementById("form-segnalazione-cittadino").addEventListener("submit"
   const lat = parseFloat(document.getElementById("segnalazione-lat").value);
   const lon = parseFloat(document.getElementById("segnalazione-lon").value);
   const descrizione = document.getElementById("segnalazione-descrizione").value.trim();
+  const fileFoto = document.getElementById("segnalazione-foto").files[0];
+
+  if (!fileFoto) {
+    messaggio.textContent = "Devi allegare una foto dell'incendio o dell'avvistamento.";
+    messaggio.hidden = false;
+    return;
+  }
 
   if (!db) {
     messaggio.textContent = "Il sistema di segnalazione non è al momento disponibile.";
@@ -346,16 +357,20 @@ document.getElementById("form-segnalazione-cittadino").addEventListener("submit"
 
   const bottoneInvia = e.target.querySelector('button[type="submit"]');
   const testoOriginaleBottone = bottoneInvia.textContent;
-  bottoneInvia.textContent = "Determinazione della zona…";
   bottoneInvia.disabled = true;
 
   try {
+    bottoneInvia.textContent = "Caricamento della foto…";
+    const fotoUrl = await caricaFoto(fileFoto);
+
+    bottoneInvia.textContent = "Determinazione della zona…";
     const { regione, provincia } = await determinaZona(lat, lon);
 
     await addDoc(collection(db, "segnalazioni"), {
       lat, lon, descrizione,
       stato: "in_attesa",
       regione, provincia,
+      foto_url: fotoUrl,
       creato_il: serverTimestamp(),
     });
     e.target.reset();
