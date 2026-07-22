@@ -47,7 +47,88 @@ Se vuoi, nel prossimo passaggio posso scriverti anche la piccola GitHub Action c
 foglio Google e lo trasforma in `data/segnalazioni.json`, così tutto resta automatico come per
 i dati satellitari — dimmi solo quando hai creato il Form e il foglio.
 
-## 4. Dati ufficiali (Vigili del Fuoco / Protezione Civile)
+## 4. Attiva l'area riservata per i coordinatori (gratis, con Firebase)
+
+Il sistema di login vero (non solo una password nascosta nel codice, che non sarebbe sicura)
+usa **Firebase**, il servizio gratuito di Google pensato apposta per siti statici come questo.
+
+### 5.1 Crea il progetto Firebase
+
+1. Vai su <https://console.firebase.google.com> e accedi con un account Google.
+2. Clicca "Aggiungi progetto", dai un nome (es. "pyranet-italia") e completa la creazione.
+3. Nel menu a sinistra vai su **Authentication** → scheda "Sign-in method" → attiva
+   il provider **"Email/Password"**.
+4. Nel menu a sinistra vai su **Firestore Database** → "Crea database" → scegli
+   "Avvia in modalità produzione" → scegli una regione europea (es. `eur3`).
+5. Dentro Firestore, scheda **"Regole"**: cancella tutto e incolla il contenuto del file
+   `firestore.rules` che trovi in questo progetto, poi clicca "Pubblica".
+6. Torna nella pagina principale del progetto → icona ingranaggio → **"Impostazioni progetto"**
+   → in basso, sotto "Le tue app", clicca l'icona **`</>`** (Web) → registra l'app (basta un nome).
+   Firebase ti mostrerà un blocco `firebaseConfig = {...}`: copia quei valori.
+7. Incolla quei valori in `assets/firebase-config.js`, al posto delle scritte
+   "INSERISCI_QUI".
+
+### 5.2 Crea un coordinatore
+
+Per ogni coordinatore servono **due cose**, in questo ordine:
+
+1. **Crea l'account di accesso:** Console Firebase → Authentication → scheda "Users" →
+   "Add user" → inserisci email e una password provvisoria. Copia l'**UID** che Firebase
+   assegna a quell'utente (una stringa lunga di lettere/numeri).
+2. **Assegna il ruolo:** Console Firebase → Firestore Database → "Avvia raccolta" →
+   nome raccolta: `coordinatori` → come "ID documento" incolla l'UID copiato al punto
+   precedente → aggiungi questi campi:
+   - `nome` (stringa): es. "Mario Rossi"
+   - `ruolo` (stringa): es. "Coordinatore Regionale"
+   - `zona` (stringa): es. "Toscana" oppure "Nord" oppure "Firenze"
+   - `email` (stringa): la stessa email dell'account
+
+Senza il documento nella raccolta `coordinatori`, l'account può accedere ma vede il
+messaggio "non ancora abilitato" — è il comportamento corretto e voluto.
+
+### 5.3 Dove si accede
+
+- I coordinatori vanno su `login.html` (link in fondo alla pagina principale).
+- Dopo l'accesso vengono portati su `area-riservata.html`: lì vedono il direttorio
+  di tutti i coordinatori e possono aggiungere incidenti verificati, che compaiono
+  automaticamente anche sulla mappa pubblica (livello verde "Incidenti verificati").
+
+### Nota sulla sicurezza
+
+I file `assets/firebase-config.js` sono pubblici per progettazione — non contengono
+segreti. La sicurezza vera sta nel file `firestore.rules`: è quello che decide chi può
+leggere e scrivere cosa, ed è applicato dai server di Google, non aggirabile dal browser.
+
+## 5. Attiva le foto nelle segnalazioni (Cloudinary, gratis, senza carta)
+
+Le segnalazioni (cittadine e quelle dirette dei coordinatori) richiedono
+obbligatoriamente una foto. Per ospitarle usiamo **Cloudinary**, un servizio
+gratuito pensato apposta per le immagini: **nessuna carta di credito
+richiesta**, 25 GB al mese gratis per sempre (Firebase Storage invece, da
+febbraio 2026, richiede obbligatoriamente una carta collegata anche solo per
+attivarlo — per questo abbiamo scelto Cloudinary).
+
+1. Vai su <https://cloudinary.com> e clicca "Sign up free". Puoi registrarti
+   anche solo con email, senza nessun dato di pagamento.
+2. Dopo la registrazione arrivi sul "Dashboard": in alto trovi scritto
+   **"Cloud name"** — copialo, ti serve tra poco.
+3. Nel menu a sinistra vai su **Settings** (l'ingranaggio) → scheda
+   **"Upload"** → scorri fino a **"Upload presets"** → **"Add upload preset"**.
+4. Imposta:
+   - **Signing Mode**: cambialo da "Signed" a **"Unsigned"** (permette al
+     sito di caricare foto direttamente dal browser, senza bisogno di un
+     server — esattamente come serve a noi).
+   - Dai un nome al preset (es. `pyranet_segnalazioni`) e copialo.
+5. Salva il preset.
+6. Apri `assets/cloudinary-config.js` e sostituisci i due valori
+   segnaposto con il tuo **Cloud name** e il nome del **preset** appena creato.
+
+Da questo momento, sia i cittadini che i coordinatori dovranno allegare una
+foto per poter inviare una segnalazione. Le foto vengono automaticamente
+ridimensionate e compresse nel browser prima di essere caricate, per
+restare ben dentro i limiti gratuiti.
+
+## 6. Dati ufficiali (Vigili del Fuoco / Protezione Civile)
 
 Al momento non esiste un'API pubblica in tempo reale con la posizione esatta degli interventi
 dei Vigili del Fuoco. Il sito rimanda quindi ai canali ufficiali nel footer. Il Corpo Nazionale
