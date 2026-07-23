@@ -47,6 +47,12 @@
       <div id="lista-in-attesa" class="mono">Caricamento…</div>
     </section>
 
+    <section class="riquadro" id="riquadro-rimozioni" hidden>
+      <h2>Richieste di rimozione in attesa</h2>
+      <p class="panel-note">Un coordinatore Regionale ha proposto di togliere questi punti dalla mappa. Il punto sparisce solo se approvi la richiesta.</p>
+      <div id="lista-rimozioni" class="mono">Caricamento…</div>
+    </section>
+
     <section class="riquadro">
       <h2>Coordinatori</h2>
       <div id="lista-coordinatori" class="mono">Caricamento…</div>
@@ -102,12 +108,17 @@
   const contenutoRiservato = document.getElementById("contenuto-riservato");
   const nomeUtente = document.getElementById("nome-utente");
   const riquadroVerifica = document.getElementById("riquadro-verifica");
+  const riquadroRimozioni = document.getElementById("riquadro-rimozioni");
 
   let profiloCorrente = null;
 
   function puoVerificare(profilo){
     if (!profilo || !profilo.ruolo) return false;
     return /interregionale/i.test(profilo.ruolo) || /regionale/i.test(profilo.ruolo) || /provinciale/i.test(profilo.ruolo);
+  }
+
+  function eInterregionaleClient(profilo){
+    return !!profilo && /interregionale/i.test(profilo.ruolo || "");
   }
 
   osservaStatoAccesso(async (utente) => {
@@ -136,6 +147,16 @@
         "Il tuo ruolo (" + (profilo.ruolo || "n/d") + ") non può verificare segnalazioni.";
     } else {
       caricaCodaVerifica();
+    }
+
+    if (eInterregionaleClient(profilo)) {
+      riquadroRimozioni.hidden = false;
+      caricaRichiesteRimozione();
+    } else if (/regionale/i.test(profilo.ruolo || "") && !/interregionale/i.test(profilo.ruolo || "")) {
+      // I Regionali non vedono questa coda, ma è utile ricordare loro dove
+      // si richiede una rimozione (dalla mappa pubblica, non da qui).
+      riquadroVerifica.insertAdjacentHTML("beforeend",
+        '<p class="panel-note" style="margin-top:0.75rem;">Puoi richiedere la rimozione di un punto dalla mappa pubblica: apri il popup del punto interessato e usa "🗑 Richiedi rimozione".</p>');
     }
 
     caricaDirettorio();
@@ -284,6 +305,94 @@
     } catch (errore) {
       console.error(errore);
       alert("Errore nell'aggiornamento della segnalazione.");
+    }
+  }
+
+  // --- Richieste di rimozione (solo Interregionali le vedono e decidono) ---
+
+  async function caricaRichiesteRimozione(){
+    const contenitore = document.getElementById("lista-rimozioni");
+    try {
+      const q = query(collection(db, "richieste_rimozione"), where("stato", "==", "in_attesa"));
+      const istantanea = await getDocs(q);
+      const zonaMia = profiloCorrente.zona;
+      const regioniMie = REGIONI_PER_AREA[zonaMia] || [];
+
+      const documenti = [];
+      istantanea.forEach(d => {
+        const r = d.data();
+        // I rilevamenti satellitari non hanno una regione associata: restano
+        // visibili a qualunque Interregionale. Le segnalazioni invece si
+        // vedono solo se rientrano nella propria macro-area (o non hanno
+        // ancora una regione determinata: rete di sicurezza).
+        const nellaMiaZona = r.tipo === "satellite"
+          || !r.regione
+          || regioniMie.includes(r.regione);
+        if (nellaMiaZona) documenti.push({ id: d.id, dati: r });
+      });
+
+      if (documenti.length === 0) {
+        contenitore.textContent = "Nessuna richiesta di rimozione in attesa nella tua zona.";
+        return;
+      }
+      contenitore.innerHTML = "";
+      documenti.forEach(({ id, dati: r }) => {
+        const riga = document.createElement("div");
+        riga.style.cssText = "border-bottom:1px solid var(--border); padding:0.6rem 0;";
+
+        const descrizionePunto = r.tipo === "satellite"
+          ? `Rilevamento satellitare — ${r.lat}, ${r.lon}${r.frp ? " (" + r.frp + " MW)" : ""}`
+          : `Segnalazione — ${r.descrizione || "(nessuna descrizione)"}`;
+
+        const testo = document.createElement("p");
+        testo.innerHTML = `<b>${descrizionePunto}</b><br>` +
+          `Motivazione: ${r.motivazione}<br>` +
+          `Richiesta da: ${r.richiesto_da || "n/d"} (${r.richiesto_da_zona || "n/d"})`;
+        riga.appendChild(testo);
+
+        const btnApprova = document.createElement("button");
+        btnApprova.textContent = "✓ Approva rimozione";
+        btnApprova.className = "btn-report";
+        btnApprova.style.cssText = "width:auto; padding:0.3rem 0.8rem; margin-right:0.5rem; background:#4CAF50; color:#0A0D0C;";
+        btnApprova.addEventListener("click", () => decidiRichiestaRimozione(id, r, true));
+
+        const btnRifiuta = document.createElement("button");
+        btnRifiuta.textContent = "✕ Rifiuta richiesta";
+        btnRifiuta.className = "btn-report";
+        btnRifiuta.style.cssText = "width:auto; padding:0.3rem 0.8rem; background:var(--accent-critico); color:#fff;";
+        btnRifiuta.addEventListener("click", () => decidiRichiestaRimozione(id, r, false));
+
+        riga.appendChild(btnApprova);
+        riga.appendChild(btnRifiuta);
+        contenitore.appendChild(riga);
+      });
+    } catch (errore) {
+      console.error(errore);
+      contenitore.textContent = "Impossibile caricare le richieste di rimozione.";
+    }
+  }
+
+  async function decidiRichiestaRimozione(idRichiesta, richiesta, approvata){
+    try {
+      await updateDoc(doc(db, "richieste_rimozione", idRichiesta), {
+        stato: approvata ? "approvata" : "rifiutata",
+        approvato_da: profiloCorrente?.nome || auth.currentUser.email,
+        approvato_il: serverTimestamp(),
+      });
+
+      // Se approvata e riguarda una segnalazione (non un rilevamento
+      // satellitare), la segnalazione stessa va marcata come "rimossa" così
+      // sparisce anche lei dalla mappa pubblica.
+      if (approvata && richiesta.tipo === "segnalazione" && richiesta.segnalazione_id) {
+        await updateDoc(doc(db, "segnalazioni", richiesta.segnalazione_id), {
+          stato: "rimossa",
+        });
+      }
+
+      caricaRichiesteRimozione();
+    } catch (errore) {
+      console.error(errore);
+      alert("Errore nella gestione della richiesta di rimozione.");
     }
   }
 
