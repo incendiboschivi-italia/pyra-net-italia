@@ -4,11 +4,12 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
-  getFirestore, collection, getDocs, addDoc, serverTimestamp
+  getFirestore, collection, getDocs, addDoc, query, where, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
 import { determinaZona } from "./geocodifica.js";
 import { caricaFoto } from "./foto.js";
+import { auth, osservaStatoAccesso, leggiProfiloCoordinatore } from "./auth.js";
 
 let db = null;
 let appFirebase = null;
@@ -18,6 +19,24 @@ try {
 } catch (errore) {
   console.warn("Firebase non configurato: le segnalazioni resteranno vuote finché non viene impostato assets/firebase-config.js", errore);
 }
+
+// Solo un coordinatore Regionale (non Provinciale, non Interregionale) può
+// richiedere la rimozione di un punto dalla mappa pubblica.
+let profiloUtente = null;
+let puoRichiedereRimozione = false;
+let celleRimosseSatellite = new Set(); // rilevamenti satellitari già rimossi (approvati da un Interregionale)
+
+osservaStatoAccesso(async (utente) => {
+  if (utente) {
+    profiloUtente = await leggiProfiloCoordinatore(utente.uid);
+    const ruolo = profiloUtente?.ruolo || "";
+    puoRichiedereRimozione = /regionale/i.test(ruolo) && !/interregionale/i.test(ruolo) && !/provinciale/i.test(ruolo);
+  } else {
+    profiloUtente = null;
+    puoRichiedereRimozione = false;
+  }
+  ridisegnaTutto();
+});
 
 const CONFIG = {
   center: [42.5, 12.5], // centro Italia
@@ -142,21 +161,82 @@ function entroIntervallo(valoreData, ore){
   return (Date.now() - ms) <= ore * 3600 * 1000;
 }
 
+// Crea il contenuto di un popup, aggiungendo (solo se l'utente collegato è
+// un coordinatore Regionale) un pulsante per richiedere la rimozione del
+// punto dalla mappa.
+function creaContenutoPopup(htmlBase, datiRimozione){
+  const contenitore = document.createElement("div");
+  contenitore.innerHTML = htmlBase;
+
+  if (puoRichiedereRimozione) {
+    const btn = document.createElement("button");
+    btn.textContent = "🗑 Richiedi rimozione";
+    btn.className = "btn-report";
+    btn.style.cssText = "width:auto; margin-top:0.6rem; padding:0.35rem 0.7rem; background:var(--accent-critico); color:#fff; font-size:0.75rem;";
+    btn.addEventListener("click", () => richiediRimozione(datiRimozione));
+    contenitore.appendChild(btn);
+  }
+
+  return contenitore;
+}
+
+async function richiediRimozione(datiPunto){
+  const motivazione = prompt(
+    "Motivo della richiesta di rimozione (obbligatorio). Verrà rimossa dalla mappa solo dopo l'approvazione di un coordinatore Interregionale:"
+  );
+  if (!motivazione || !motivazione.trim()) return;
+
+  try {
+    await addDoc(collection(db, "richieste_rimozione"), {
+      ...datiPunto,
+      motivazione: motivazione.trim(),
+      richiesto_da: profiloUtente?.nome || auth.currentUser?.email || "n/d",
+      richiesto_da_zona: profiloUtente?.zona || null,
+      stato: "in_attesa",
+      richiesto_il: serverTimestamp(),
+    });
+    alert("Richiesta inviata. Il punto resterà sulla mappa finché un coordinatore Interregionale non approva la rimozione.");
+  } catch (errore) {
+    console.error(errore);
+    alert("Errore nell'invio della richiesta di rimozione.");
+  }
+}
+
+async function caricaRimozioniSatellite(){
+  if (!db) return;
+  try {
+    const q = query(collection(db, "richieste_rimozione"), where("tipo", "==", "satellite"), where("stato", "==", "approvata"));
+    const istantanea = await getDocs(q);
+    celleRimosseSatellite = new Set();
+    istantanea.forEach(d => {
+      const r = d.data();
+      celleRimosseSatellite.add(`${r.lat.toFixed(2)},${r.lon.toFixed(2)}`);
+    });
+    disegnaFuoco();
+  } catch (errore) {
+    console.warn("Impossibile caricare le rimozioni approvate:", errore);
+  }
+}
+
 function disegnaFuoco(){
   layerFuoco.clearLayers();
-  const visibili = datiFuoco.filter(p => entroIntervallo(p.data_ora, oreSelezionate));
+  const visibili = datiFuoco
+    .filter(p => entroIntervallo(p.data_ora, oreSelezionate))
+    .filter(p => !celleRimosseSatellite.has(`${p.lat.toFixed(2)},${p.lon.toFixed(2)}`));
   visibili.forEach(p => {
     const coord = coordinateComplete(p.lat, p.lon);
     const diametro = raggioIntensita(p.frp) * 2;
-    const marker = L.marker([p.lat, p.lon], { icon: iconaPallino(coloreIntensita(p.frp), diametro) }).bindPopup(
+    const marker = L.marker([p.lat, p.lon], { icon: iconaPallino(coloreIntensita(p.frp), diametro) });
+    marker.bindPopup(creaContenutoPopup(
       `<b>Rilevamento satellitare</b><br>` +
       `Data e ora: ${formatOra(p.data_ora)}<br>` +
       `Coordinate: ${coord.dms}<br>` +
       `Coordinate (decimali): ${coord.decimali}<br>` +
       `Sensore: ${p.sensore || "n/d"}<br>` +
       `Confidenza: ${p.confidenza || "n/d"}<br>` +
-      `FRP (intensità): ${p.frp !== undefined && p.frp !== null ? p.frp + " MW" : "n/d"}`
-    );
+      `FRP (intensità): ${p.frp !== undefined && p.frp !== null ? p.frp + " MW" : "n/d"}`,
+      { tipo: "satellite", lat: p.lat, lon: p.lon, frp: p.frp ?? null }
+    ));
     layerFuoco.addLayer(marker);
   });
   document.getElementById("count-fuoco").textContent = visibili.length;
@@ -168,15 +248,17 @@ function disegnaSegnalazioni(){
   const visibili = datiSegnalazioni.filter(p => entroIntervallo(p.creato_il, oreSelezionate));
   visibili.forEach(p => {
     const coord = coordinateComplete(p.lat, p.lon);
-    const marker = L.marker([p.lat, p.lon], { icon: iconaPallino("#3E8E8E", 14, true) }).bindPopup(
+    const marker = L.marker([p.lat, p.lon], { icon: iconaPallino("#3E8E8E", 14, true) });
+    marker.bindPopup(creaContenutoPopup(
       `<b>Segnalazione cittadina — in attesa di verifica</b><br>` +
       `Coordinate: ${coord.dms}<br>` +
       `Coordinate (decimali): ${coord.decimali}` +
       `${p.regione ? "<br>Regione: " + p.regione : ""}` +
       `${p.provincia ? "<br>Provincia: " + p.provincia : ""}` +
       `${p.descrizione ? "<br>Descrizione: " + p.descrizione : ""}` +
-      `${p.foto_url ? `<br><a href="${p.foto_url}" target="_blank" rel="noopener"><img src="${p.foto_url}" alt="Foto della segnalazione" style="max-width:200px; max-height:150px; border-radius:4px; margin-top:0.4rem; display:block;"></a>` : ""}`
-    );
+      `${p.foto_url ? `<br><a href="${p.foto_url}" target="_blank" rel="noopener"><img src="${p.foto_url}" alt="Foto della segnalazione" style="max-width:200px; max-height:150px; border-radius:4px; margin-top:0.4rem; display:block;"></a>` : ""}`,
+      { tipo: "segnalazione", segnalazione_id: p._id, descrizione: p.descrizione ?? null, regione: p.regione ?? null }
+    ));
     layerSegnalazioni.addLayer(marker);
   });
   document.getElementById("count-segnalazioni").textContent = visibili.length;
@@ -188,7 +270,8 @@ function disegnaVerificati(){
   const visibili = datiVerificati.filter(p => entroIntervallo(p.creato_il, oreSelezionate));
   visibili.forEach(p => {
     const coord = coordinateComplete(p.lat, p.lon);
-    const marker = L.marker([p.lat, p.lon], { icon: iconaPallino("#4CAF50", 16, false) }).bindPopup(
+    const marker = L.marker([p.lat, p.lon], { icon: iconaPallino("#4CAF50", 16, false) });
+    marker.bindPopup(creaContenutoPopup(
       `<b>Incidente verificato da un coordinatore</b><br>` +
       `Coordinate: ${coord.dms}<br>` +
       `Coordinate (decimali): ${coord.decimali}` +
@@ -196,8 +279,9 @@ function disegnaVerificati(){
       `${p.provincia ? "<br>Provincia: " + p.provincia : ""}` +
       `${p.descrizione ? "<br>Descrizione: " + p.descrizione : ""}` +
       `${p.verificato_da ? "<br>Verificato da: " + p.verificato_da : ""}` +
-      `${p.foto_url ? `<br><a href="${p.foto_url}" target="_blank" rel="noopener"><img src="${p.foto_url}" alt="Foto dell'incidente" style="max-width:200px; max-height:150px; border-radius:4px; margin-top:0.4rem; display:block;"></a>` : ""}`
-    );
+      `${p.foto_url ? `<br><a href="${p.foto_url}" target="_blank" rel="noopener"><img src="${p.foto_url}" alt="Foto dell'incidente" style="max-width:200px; max-height:150px; border-radius:4px; margin-top:0.4rem; display:block;"></a>` : ""}`,
+      { tipo: "segnalazione", segnalazione_id: p._id, descrizione: p.descrizione ?? null, regione: p.regione ?? null }
+    ));
     layerVerificati.addLayer(marker);
   });
   return visibili;
@@ -397,9 +481,10 @@ async function caricaSegnalazioni(){
     datiVerificati = [];
     istantanea.forEach(documento => {
       const dati = documento.data();
+      dati._id = documento.id;
       if (dati.stato === "verificata") datiVerificati.push(dati);
       else if (dati.stato === "in_attesa") datiSegnalazioni.push(dati);
-      // le "rifiutate" non vengono mostrate sulla mappa pubblica
+      // le "rifiutate" e le "rimosse" non vengono mostrate sulla mappa pubblica
     });
     disegnaSegnalazioni();
     disegnaVerificati();
@@ -429,6 +514,8 @@ async function caricaDati(){
 
 caricaDati();
 caricaSegnalazioni();
+caricaRimozioniSatellite();
 // Ricontrolla i dati ogni 15 minuti (i dati satellitari si aggiornano ogni poche ore via GitHub Action)
 setInterval(caricaDati, 15 * 60 * 1000);
 setInterval(caricaSegnalazioni, 5 * 60 * 1000);
+setInterval(caricaRimozioniSatellite, 5 * 60 * 1000);
