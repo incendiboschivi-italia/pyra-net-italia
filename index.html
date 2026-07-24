@@ -127,6 +127,23 @@
   </div>
 </div>
 
+<div id="modale-feedback" class="modale" hidden>
+  <div class="modale-contenuto">
+    <button type="button" id="chiudi-modale-feedback" class="modale-chiudi" aria-label="Chiudi">×</button>
+    <h2>Grazie per la segnalazione!</h2>
+    <p class="panel-note">Com'è andata l'esperienza di invio? Il tuo feedback ci aiuta a migliorare il sito (facoltativo).</p>
+    <form id="form-feedback" class="form-incidente">
+      <label>
+        <span>Il tuo feedback</span>
+        <textarea id="feedback-testo" rows="3" placeholder="Cosa ha funzionato bene, cosa no, suggerimenti…"></textarea>
+      </label>
+      <button type="submit" class="btn-report" style="width:auto;">Invia feedback</button>
+      <button type="button" id="btn-salta-feedback" class="btn-report" style="width:auto; background:var(--surface-2); color:var(--text); border:1px solid var(--border); margin-left:0.5rem;">Salta</button>
+    </form>
+    <p id="messaggio-feedback" class="messaggio-errore" hidden></p>
+  </div>
+</div>
+
 <footer class="disclaimer">
   <p><strong>Attenzione:</strong> questi dati non sostituiscono i canali ufficiali. Per emergenze in corso chiama il <strong>115</strong> (Vigili del Fuoco) o il <strong>112</strong>. Per bollettini e allerte ufficiali consulta la <a href="https://www.protezionecivile.gov.it" target="_blank" rel="noopener">Protezione Civile</a>. — <a href="area-riservata.html">Area riservata coordinatori</a></p>
   <p>Serve assistenza? ✉️ <a href="mailto:pyranet.italia.assistenza@gmail.com">pyranet.italia.assistenza@gmail.com</a> — 💬 <a href="https://discord.gg/9HPSvwPRpg" target="_blank" rel="noopener">apri un ticket su Discord</a></p>
