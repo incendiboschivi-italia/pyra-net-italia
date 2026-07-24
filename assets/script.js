@@ -4,7 +4,7 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
-  getFirestore, collection, getDocs, addDoc, query, where, serverTimestamp
+  getFirestore, collection, getDocs, addDoc, updateDoc, doc, query, where, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
 import { determinaZona } from "./geocodifica.js";
@@ -22,19 +22,24 @@ try {
 }
 
 // Solo un coordinatore Regionale (non Provinciale, non Interregionale) può
-// richiedere la rimozione di un punto dalla mappa pubblica.
+// richiedere la rimozione di un punto dalla mappa pubblica. Un Interregionale
+// invece può rimuovere direttamente, sempre motivando, senza bisogno di
+// approvazione (è già il livello più alto).
 let profiloUtente = null;
 let puoRichiedereRimozione = false;
-let celleRimosseSatellite = new Set(); // rilevamenti satellitari già rimossi (approvati da un Interregionale)
+let puoRimuovereDirettamente = false;
+let celleRimosseSatellite = new Set(); // rilevamenti satellitari già rimossi
 
 osservaStatoAccesso(async (utente) => {
   if (utente) {
     profiloUtente = await leggiProfiloCoordinatore(utente.uid);
     const ruolo = profiloUtente?.ruolo || "";
     puoRichiedereRimozione = /regionale/i.test(ruolo) && !/interregionale/i.test(ruolo) && !/provinciale/i.test(ruolo);
+    puoRimuovereDirettamente = /interregionale/i.test(ruolo);
   } else {
     profiloUtente = null;
     puoRichiedereRimozione = false;
+    puoRimuovereDirettamente = false;
   }
   ridisegnaTutto();
 });
@@ -184,6 +189,15 @@ function creaContenutoPopup(htmlBase, datiRimozione){
     contenitore.appendChild(btn);
   }
 
+  if (puoRimuovereDirettamente) {
+    const btn = document.createElement("button");
+    btn.textContent = "🗑 Rimuovi (motivazione richiesta)";
+    btn.className = "btn-report";
+    btn.style.cssText = "width:auto; margin-top:0.6rem; padding:0.35rem 0.7rem; background:var(--accent-critico); color:#fff; font-size:0.75rem;";
+    btn.addEventListener("click", () => rimuoviDirettamente(datiRimozione));
+    contenitore.appendChild(btn);
+  }
+
   return contenitore;
 }
 
@@ -206,6 +220,43 @@ async function richiediRimozione(datiPunto){
   } catch (errore) {
     console.error(errore);
     alert("Errore nell'invio della richiesta di rimozione.");
+  }
+}
+
+async function rimuoviDirettamente(datiPunto){
+  const motivazione = prompt(
+    "Sei un coordinatore Interregionale: la rimozione è immediata, ma è OBBLIGATORIO indicare il motivo (resterà registrato):"
+  );
+  if (!motivazione || !motivazione.trim()) return;
+
+  const nomeUtente = profiloUtente?.nome || auth.currentUser?.email || "n/d";
+
+  try {
+    // Registra comunque la rimozione (con motivazione) per tracciabilità,
+    // ma già come "approvata" da se stesso: un Interregionale non ha
+    // bisogno di un'ulteriore approvazione.
+    await addDoc(collection(db, "richieste_rimozione"), {
+      ...datiPunto,
+      motivazione: motivazione.trim(),
+      richiesto_da: nomeUtente,
+      richiesto_da_zona: profiloUtente?.zona || null,
+      stato: "approvata",
+      approvato_da: nomeUtente,
+      approvato_il: serverTimestamp(),
+      richiesto_il: serverTimestamp(),
+    });
+
+    if (datiPunto.tipo === "segnalazione" && datiPunto.segnalazione_id) {
+      await updateDoc(doc(db, "segnalazioni", datiPunto.segnalazione_id), { stato: "rimossa" });
+      caricaSegnalazioni();
+    } else if (datiPunto.tipo === "satellite") {
+      caricaRimozioniSatellite();
+    }
+
+    alert("Punto rimosso dalla mappa.");
+  } catch (errore) {
+    console.error(errore);
+    alert("Errore nella rimozione del punto.");
   }
 }
 
