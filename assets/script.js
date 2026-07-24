@@ -9,6 +9,7 @@ import {
 import { firebaseConfig } from "./firebase-config.js";
 import { determinaZona } from "./geocodifica.js";
 import { caricaFoto } from "./foto.js";
+import { DISCORD_WEBHOOK_URL } from "./discord-config.js";
 import { auth, osservaStatoAccesso, leggiProfiloCoordinatore } from "./auth.js";
 
 let db = null;
@@ -461,6 +462,7 @@ document.getElementById("form-segnalazione-cittadino").addEventListener("submit"
     modale.hidden = true;
     if (markerSelezioneTemp) { map.removeLayer(markerSelezioneTemp); markerSelezioneTemp = null; }
     caricaSegnalazioni();
+    document.getElementById("modale-feedback").hidden = false;
   } catch (errore) {
     console.error(errore);
     messaggio.textContent = "Errore nell'invio. Riprova.";
@@ -468,6 +470,50 @@ document.getElementById("form-segnalazione-cittadino").addEventListener("submit"
   } finally {
     bottoneInvia.textContent = testoOriginaleBottone;
     bottoneInvia.disabled = false;
+  }
+});
+
+// --- Feedback dopo l'invio di una segnalazione (inviato a Discord) ---
+
+const modaleFeedback = document.getElementById("modale-feedback");
+
+document.getElementById("chiudi-modale-feedback").addEventListener("click", () => { modaleFeedback.hidden = true; });
+document.getElementById("btn-salta-feedback").addEventListener("click", () => { modaleFeedback.hidden = true; });
+modaleFeedback.addEventListener("click", (e) => { if (e.target === modaleFeedback) modaleFeedback.hidden = true; });
+
+document.getElementById("form-feedback").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const messaggioFeedback = document.getElementById("messaggio-feedback");
+  messaggioFeedback.hidden = true;
+
+  const testo = document.getElementById("feedback-testo").value.trim();
+  if (!testo) { modaleFeedback.hidden = true; return; } // niente scritto = salta senza errori
+
+  if (DISCORD_WEBHOOK_URL.startsWith("INSERISCI_QUI")) {
+    console.warn("Webhook Discord non configurato: il feedback non è stato inviato.");
+    modaleFeedback.hidden = true;
+    return;
+  }
+
+  const bottone = e.target.querySelector('button[type="submit"]');
+  bottone.disabled = true;
+
+  try {
+    await fetch(DISCORD_WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        content: `📝 **Nuovo feedback da PyraNet Italia**\n${testo}`,
+      }),
+    });
+    e.target.reset();
+    modaleFeedback.hidden = true;
+  } catch (errore) {
+    console.error(errore);
+    messaggioFeedback.textContent = "Impossibile inviare il feedback in questo momento.";
+    messaggioFeedback.hidden = false;
+  } finally {
+    bottone.disabled = false;
   }
 });
 
