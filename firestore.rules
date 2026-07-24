@@ -113,13 +113,24 @@ service cloud.firestore {
       // Lettura riservata ai coordinatori (è una coda di lavoro interna).
       allow read: if isCoordinatore();
 
-      // Solo un coordinatore Regionale (non Provinciale, non Interregionale)
-      // può proporre una rimozione, e solo motivandola.
-      allow create: if eRegionaleSemplice()
-                    && request.resource.data.stato == 'in_attesa'
-                    && request.resource.data.motivazione is string
-                    && request.resource.data.motivazione.size() > 0
-                    && request.resource.data.tipo in ['satellite', 'segnalazione'];
+      // Un coordinatore Regionale (non Provinciale, non Interregionale) può
+      // solo PROPORRE una rimozione (resta "in_attesa" di approvazione).
+      // Un coordinatore Interregionale può invece rimuovere direttamente,
+      // creando la richiesta già "approvata" da sé stesso — ma sempre e
+      // solo motivando il perché.
+      allow create: if
+        (eRegionaleSemplice()
+          && request.resource.data.stato == 'in_attesa'
+          && request.resource.data.motivazione is string
+          && request.resource.data.motivazione.size() > 0
+          && request.resource.data.tipo in ['satellite', 'segnalazione'])
+        ||
+        (eInterregionale()
+          && request.resource.data.stato == 'approvata'
+          && request.resource.data.approvato_da is string
+          && request.resource.data.motivazione is string
+          && request.resource.data.motivazione.size() > 0
+          && request.resource.data.tipo in ['satellite', 'segnalazione']);
 
       // Solo un coordinatore Interregionale può accettare o rifiutare la
       // richiesta (mai il contrario: una volta decisa, resta decisa).
