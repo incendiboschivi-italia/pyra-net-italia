@@ -249,7 +249,7 @@ function disegnaSegnalazioni(){
   const visibili = datiSegnalazioni.filter(p => entroIntervallo(p.creato_il, oreSelezionate));
   visibili.forEach(p => {
     const coord = coordinateComplete(p.lat, p.lon);
-    const marker = L.marker([p.lat, p.lon], { icon: iconaPallino("#3E8E8E", 14, true) });
+    const marker = L.marker([p.lat, p.lon], { icon: iconaPallino("#2979FF", 14, true) });
     marker.bindPopup(creaContenutoPopup(
       `<b>Segnalazione cittadina — in attesa di verifica</b><br>` +
       `Coordinate: ${coord.dms}<br>` +
@@ -271,7 +271,7 @@ function disegnaVerificati(){
   const visibili = datiVerificati.filter(p => entroIntervallo(p.creato_il, oreSelezionate));
   visibili.forEach(p => {
     const coord = coordinateComplete(p.lat, p.lon);
-    const marker = L.marker([p.lat, p.lon], { icon: iconaPallino("#4CAF50", 16, false) });
+    const marker = L.marker([p.lat, p.lon], { icon: iconaPallino("#D500F9", 16, false) });
     marker.bindPopup(creaContenutoPopup(
       `<b>Incidente verificato da un coordinatore</b><br>` +
       `Coordinate: ${coord.dms}<br>` +
