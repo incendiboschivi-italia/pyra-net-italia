@@ -7,7 +7,7 @@
   --text-dim: #8A9992;
   --accent-fuoco: #E85A2B;
   --accent-critico: #C81E1E;
-  --accent-info: #3E8E8E;
+  --accent-info: #2979FF;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
   --font-body: 'Inter', system-ui, sans-serif;
 }
@@ -160,7 +160,7 @@ a{ color: var(--accent-fuoco); }
 }
 .dot-fuoco{ background: var(--accent-fuoco); }
 .dot-info{ background: var(--accent-info); }
-.dot-verificato{ background: #4CAF50; }
+.dot-verificato{ background: #D500F9; }
 
 .range-select{
   display: flex;
