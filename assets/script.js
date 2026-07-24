@@ -137,12 +137,18 @@ function raggioIntensita(frp){
 // un vero marker può essere raggruppata (clustering) quando ce ne sono
 // tanti vicini, invece di sovrapporsi in modo confuso.
 function iconaPallino(colore, diametro, tratteggiato){
-  const bordo = tratteggiato ? `2px dashed ${colore}` : `1.5px solid ${colore}`;
+  // Un alone bianco spesso attorno al colore fa risaltare il pallino
+  // indipendentemente da cosa c'è sotto sulla mappa (terreno, confini, scritte).
+  const spessoreAlone = 3;
+  const diametroTotale = diametro + spessoreAlone * 2;
+  const stileBordo = tratteggiato
+    ? `border: 3px dashed ${colore};`
+    : `border: 3px solid ${colore};`;
   return L.divIcon({
     className: "pallino-marker",
-    html: `<div style="width:${diametro}px;height:${diametro}px;border-radius:50%;background:${colore};opacity:0.7;border:${bordo};"></div>`,
-    iconSize: [diametro, diametro],
-    iconAnchor: [diametro / 2, diametro / 2],
+    html: `<div style="width:${diametro}px;height:${diametro}px;border-radius:50%;background:${colore};opacity:0.95;${stileBordo}box-shadow:0 0 0 ${spessoreAlone}px rgba(255,255,255,0.9), 0 1px 4px rgba(0,0,0,0.6);"></div>`,
+    iconSize: [diametroTotale, diametroTotale],
+    iconAnchor: [diametroTotale / 2, diametroTotale / 2],
   });
 }
 
@@ -249,7 +255,7 @@ function disegnaSegnalazioni(){
   const visibili = datiSegnalazioni.filter(p => entroIntervallo(p.creato_il, oreSelezionate));
   visibili.forEach(p => {
     const coord = coordinateComplete(p.lat, p.lon);
-    const marker = L.marker([p.lat, p.lon], { icon: iconaPallino("#2979FF", 14, true) });
+    const marker = L.marker([p.lat, p.lon], { icon: iconaPallino("#2979FF", 18, true) });
     marker.bindPopup(creaContenutoPopup(
       `<b>Segnalazione cittadina — in attesa di verifica</b><br>` +
       `Coordinate: ${coord.dms}<br>` +
@@ -271,7 +277,7 @@ function disegnaVerificati(){
   const visibili = datiVerificati.filter(p => entroIntervallo(p.creato_il, oreSelezionate));
   visibili.forEach(p => {
     const coord = coordinateComplete(p.lat, p.lon);
-    const marker = L.marker([p.lat, p.lon], { icon: iconaPallino("#D500F9", 16, false) });
+    const marker = L.marker([p.lat, p.lon], { icon: iconaPallino("#D500F9", 20, false) });
     marker.bindPopup(creaContenutoPopup(
       `<b>Incidente verificato da un coordinatore</b><br>` +
       `Coordinate: ${coord.dms}<br>` +
