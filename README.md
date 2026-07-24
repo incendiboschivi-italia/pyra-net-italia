@@ -128,7 +128,31 @@ foto per poter inviare una segnalazione. Le foto vengono automaticamente
 ridimensionate e compresse nel browser prima di essere caricate, per
 restare ben dentro i limiti gratuiti.
 
-## 6. Dati ufficiali (Vigili del Fuoco / Protezione Civile)
+## 6. Attiva il feedback su Discord (gratis)
+
+Dopo ogni segnalazione inviata, il sito mostra un piccolo modulo di feedback
+facoltativo. Se compilato, il messaggio arriva direttamente in un canale
+Discord a tua scelta, tramite un "webhook" (un link speciale che permette
+di scrivere in un canale senza bisogno di un bot).
+
+1. Su Discord, vai nel server dove vuoi ricevere i feedback.
+2. Clicca l'ingranaggio ⚙️ accanto al canale scelto → **"Integrazioni"** →
+   **"Webhook"** → **"Nuovo webhook"**.
+3. Dai un nome al webhook (es. "Feedback PyraNet") e clicca
+   **"Copia URL webhook"**.
+4. Incolla quel link in `assets/discord-config.js`, al posto della scritta
+   "INSERISCI_QUI...".
+
+### Nota sulla sicurezza
+
+A differenza delle altre chiavi di questo progetto, il link del webhook
+**non è pensato per essere pubblico**: chiunque lo trovasse nel codice del
+sito potrebbe usarlo per scrivere messaggi nel tuo canale (spam, non un
+rischio per i dati). Se dovesse succedere, torna su Discord → Integrazioni
+→ Webhook → elimina quello vecchio e creane uno nuovo, poi aggiorna
+`assets/discord-config.js`.
+
+## 7. Dati ufficiali (Vigili del Fuoco / Protezione Civile)
 
 Al momento non esiste un'API pubblica in tempo reale con la posizione esatta degli interventi
 dei Vigili del Fuoco. Il sito rimanda quindi ai canali ufficiali nel footer. Il Corpo Nazionale
