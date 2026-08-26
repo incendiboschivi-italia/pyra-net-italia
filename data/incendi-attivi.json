@@ -1,5 +1,14 @@
 {
-  "aggiornato_il": "2026-08-26T04:05:33.843709+00:00",
+  "aggiornato_il": "2026-08-26T09:59:48.158617+00:00",
   "fonte": "NASA FIRMS (VIIRS/MODIS, NRT) — filtrato sui confini reali dell'Italia, esclusi i falsi positivi industriali noti, raggruppato per posizione, solo FRP >= 50 MW",
-  "rilevamenti": []
+  "rilevamenti": [
+    {
+      "lat": 40.0683,
+      "lon": 15.409,
+      "data_ora": "2026-08-26T03:28:00+00:00",
+      "frp": 85.2,
+      "confidenza": "100",
+      "sensore": "MODIS"
+    }
+  ]
 }
