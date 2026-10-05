@@ -1,5 +1,38 @@
 {
-  "aggiornato_il": "2026-10-05T05:50:03.146694+00:00",
+  "aggiornato_il": "2026-10-05T14:52:00.933635+00:00",
   "fonte": "NASA FIRMS (VIIRS/MODIS, NRT) — filtrato sui confini reali dell'Italia, esclusi i falsi positivi industriali noti, raggruppato per posizione, solo FRP >= 50 MW",
-  "rilevamenti": []
+  "rilevamenti": [
+    {
+      "lat": 37.6213,
+      "lon": 13.9556,
+      "data_ora": "2026-10-05T12:44:00+00:00",
+      "frp": 62.5,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 40.2946,
+      "lon": 8.749,
+      "data_ora": "2026-10-05T12:44:00+00:00",
+      "frp": 88.6,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 40.2989,
+      "lon": 8.754,
+      "data_ora": "2026-10-05T12:44:00+00:00",
+      "frp": 88.6,
+      "confidenza": "n",
+      "sensore": "VIIRS"
+    },
+    {
+      "lat": 41.2721,
+      "lon": 15.5167,
+      "data_ora": "2026-10-05T08:30:00+00:00",
+      "frp": 55.9,
+      "confidenza": "87",
+      "sensore": "MODIS"
+    }
+  ]
 }
